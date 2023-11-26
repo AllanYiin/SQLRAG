@@ -63,6 +63,7 @@
   <Import Condition="'$(SQLDBExtensionsRefPath)' == ''" Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets" />
   <ItemGroup>
     <Folder Include="Properties" />
+    <Folder Include="assets" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -76,5 +77,20 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="SQLRAG.publish.xml" />
+    <None Include="README.md" />
+    <None Include=".gitignore" />
+    <None Include="SQLRAG.sln" />
+    <None Include="SQLRAG.sqlproj.user" />
+    <None Include="assets\SqlRAG.bak">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="assets\ChatCompletion_demo.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="assets\QueryIntentCache_demo.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 </Project>

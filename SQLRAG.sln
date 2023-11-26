@@ -1,0 +1,27 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34309.116
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "SQLRAG", "SQLRAG.sqlproj", "{7E86C45F-4D32-4AB0-AF50-79B6270EDAEE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7E86C45F-4D32-4AB0-AF50-79B6270EDAEE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7E86C45F-4D32-4AB0-AF50-79B6270EDAEE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7E86C45F-4D32-4AB0-AF50-79B6270EDAEE}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{7E86C45F-4D32-4AB0-AF50-79B6270EDAEE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7E86C45F-4D32-4AB0-AF50-79B6270EDAEE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7E86C45F-4D32-4AB0-AF50-79B6270EDAEE}.Release|Any CPU.Deploy.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {7F450B2E-31E1-42AA-8C3C-5E32BA01E5E3}
+	EndGlobalSection
+EndGlobal

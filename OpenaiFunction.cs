@@ -12,7 +12,7 @@ using System.Reflection;
 
 public partial class OpenaiFunction
 {
-    private static string apikey = "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";  //此序號已經失效，請填入自己的序號
+    private static string apikey = "請填入自己的序號";  
 
     [SqlFunction]
     public static SqlString GetEmbedding(SqlString inputText)
@@ -53,10 +53,14 @@ public partial class OpenaiFunction
         string apiKey = apikey;
         string apiUrl = "https://api.openai.com/v1/chat/completions";
         string modelToUse = model.IsNull || String.IsNullOrWhiteSpace(model.Value) ? "gpt-3.5-turbo" : model.Value;
-        string requestBody = $@"{{""model"": ""{modelToUse}"", ""messages"": [{{""role"": ""user"", ""content"": ""{inputPrompt.ToString()}""}}]}}";
+        string requestBody1 = $@"{{""model"": ""{modelToUse}"", ""messages"": [{{""role"": ""system"", ""content"": ""{systemProimpt.ToString()}""}},{{""role"": ""user"", ""content"": ""{inputPrompt.ToString()}""}}]}}";
+        string requestBody = systemProimpt.IsNull || String.IsNullOrWhiteSpace(systemProimpt.Value) ? $@"{{""model"": ""{modelToUse}"", ""messages"": [{{""role"": ""user"", ""content"": ""{inputPrompt.ToString()}""}}]}}" : requestBody1;
 
-        
-      
+
+
+
+
+
         ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
         try
         {

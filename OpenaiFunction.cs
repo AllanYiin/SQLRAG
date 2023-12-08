@@ -8,17 +8,43 @@ using System.Threading.Tasks;
 using Microsoft.SqlServer.Server;
 using System.IO;
 using System.Reflection;
+using System.Data.Common;
+using System.Collections.ObjectModel;
 
 
 public partial class OpenaiFunction
 {
-    private static string apikey = "請填入自己的序號";  
 
-    [SqlFunction]
+
+
+    private static string GetKey()
+    {
+        System.Data.SqlClient.SqlConnection.ColumnEncryptionKeyCacheTtl = TimeSpan.Zero;
+        using (SqlConnection conn = new SqlConnection("context connection=true"))
+        {
+            conn.Open();
+            SqlCommand cmd = new SqlCommand(
+                @"Declare @encrytext varbinary(4000)=(SELECT  [KeyValue] FROM [SQLRAG].[dbo].[EncryptedKeys] WHERE  [KeyName]='OPENAI_API_KEY')
+                    Declare @decrytext varchar(512)=DecryptByCert(Cert_ID('SqlRAGCertificate'),@encrytext,N'P@ssw0rd')
+                    select @decrytext ", conn);
+        
+            using (SqlDataReader reader = cmd.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    return (string)reader[0];
+                }
+            }
+            return string.Empty;
+        }
+    }
+
+    [SqlFunction(DataAccess = DataAccessKind.Read)]
     public static SqlString GetEmbedding(SqlString inputText)
     {
-        string apiKey = apikey;
-        string apiUrl = "https://api.openai.com/v1/embeddings"; 
+       
+        string apiKey = GetKey();
+        string apiUrl = "https://api.openai.com/v1/embeddings";
         string requestBody = $"{{\"model\":\"text-embedding-ada-002\",\"input\": \"{inputText}\",\"encoding_format\":\"float\"}}";
         ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
         try
@@ -47,27 +73,22 @@ public partial class OpenaiFunction
         }
     }
 
-    [SqlFunction]
+    [SqlFunction(DataAccess = DataAccessKind.Read)]
     public static SqlString ChatCompletion(SqlString inputPrompt, SqlString systemProimpt = default(SqlString), SqlString model = default(SqlString))
     {
-        string apiKey = apikey;
+       ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+        string apiKey = GetKey();
         string apiUrl = "https://api.openai.com/v1/chat/completions";
         string modelToUse = model.IsNull || String.IsNullOrWhiteSpace(model.Value) ? "gpt-3.5-turbo" : model.Value;
         string requestBody1 = $@"{{""model"": ""{modelToUse}"", ""messages"": [{{""role"": ""system"", ""content"": ""{systemProimpt.ToString()}""}},{{""role"": ""user"", ""content"": ""{inputPrompt.ToString()}""}}]}}";
         string requestBody = systemProimpt.IsNull || String.IsNullOrWhiteSpace(systemProimpt.Value) ? $@"{{""model"": ""{modelToUse}"", ""messages"": [{{""role"": ""user"", ""content"": ""{inputPrompt.ToString()}""}}]}}" : requestBody1;
 
-
-
-
-
-
-        ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
         try
         {
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(apiUrl);
             request.Method = "POST";
             request.Headers["Authorization"] = $"Bearer {apiKey}";
-            request.Headers["Accept-Language"] ="zh-TW";
+            request.Headers["Accept-Language"] = "zh-TW";
             request.ContentType = "application/json";
 
             using (StreamWriter streamWriter = new StreamWriter(request.GetRequestStream()))
@@ -88,6 +109,7 @@ public partial class OpenaiFunction
             return new SqlString($"Error: {ex.Message}");
         }
     }
+
 
 
     private static string ParseEmbedding(string jsonResponse)

@@ -27,7 +27,7 @@
     <DefaultCollation>Chinese_Taiwan_Stroke_CI_AS</DefaultCollation>
     <Trustworthy>True</Trustworthy>
     <AssemblyOwner>dbo</AssemblyOwner>
-    <PermissionSet>UNSAFE</PermissionSet>
+    <PermissionSet>EXTERNAL_ACCESS</PermissionSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <OutputPath>bin\Release\</OutputPath>
@@ -81,9 +81,6 @@
     <None Include=".gitignore" />
     <None Include="SQLRAG.sln" />
     <None Include="SQLRAG.sqlproj.user" />
-    <None Include="assets\SqlRAG.bak">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="assets\ChatCompletion.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -95,5 +92,10 @@
     <None Include="assets\QueryIntentCache_demo.sql">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Build Include="dbo.EncryptedKeys.sql" />
+    <Build Include="dbo.QueryIntentCache.sql" />
+    <Build Include="SqlRAGCertificate.sql" />
   </ItemGroup>
 </Project>

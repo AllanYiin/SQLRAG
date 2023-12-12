@@ -52,7 +52,9 @@ public partial class OpenaiFunction
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(apiUrl);
             request.Method = "POST";
             request.Headers["Authorization"] = $"Bearer {apiKey}";
+            request.Headers["Accept-Language"] = "zh-TW";
             request.ContentType = "application/json";
+            
 
             using (StreamWriter streamWriter = new StreamWriter(request.GetRequestStream()))
             {

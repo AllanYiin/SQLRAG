@@ -29,7 +29,7 @@
 DecryptByCert(Cert_ID('SqlRAGCertificate'), EncryptByCert(Cert_ID('SqlRAGCertificate'), @cleartext) ,'P@ssw0rd')
 
 ```
-3. 建置專案，發行至指定資料庫 (專案中的SQLRAG.publish.xml為發行設定檔範例，請改指向至你實際的資料庫，在assets中有SqlRAG資料庫的備份可以直接還原)   
+3. 建置專案，發行至指定資料庫 (專案中的SQLRAG.publish.xml為發行設定檔範例，請改指向至你實際的資料庫)   
 4. assets中的QueryIntentCache_demo.sql (語意快取範例)以及ChatCompletion_demo.sql(ChatGPT回答範例)   
 
 ![ChatCompletion](assets/QueryCache.png)

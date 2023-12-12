@@ -74,6 +74,7 @@
   <ItemGroup>
     <Compile Include="DistanceFunctions.cs" />
     <Compile Include="OpenaiFunction.cs" />
+    <Compile Include="TextFunction.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="SQLRAG.publish.xml" />

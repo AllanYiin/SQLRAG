@@ -40,7 +40,7 @@ public partial class OpenaiFunction
         }
     }
 
-    [return: SqlFacet(MaxSize = -1)]
+
     [SqlFunction(DataAccess = DataAccessKind.Read)]
     public static SqlArray GetEmbedding([SqlFacet(MaxSize = -1)] SqlString inputText)
     {
@@ -64,11 +64,13 @@ public partial class OpenaiFunction
             }
 
             HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+            string result;
             using (StreamReader streamReader = new StreamReader(response.GetResponseStream()))
             {
-                string result = streamReader.ReadToEnd();
-                return SqlArray.Parse(ParseEmbedding(result)); // 返回結果
+                result = streamReader.ReadToEnd();
+               
             }
+            return new SqlArray(System.Array.ConvertAll(ParseEmbedding(result).Split(','), Double.Parse)); // 返回結果
         }
         catch (Exception ex)
         {

@@ -7,10 +7,11 @@ using System.Security.Cryptography;
 using Microsoft.SqlServer.Server;
 using System.Collections.Generic;
 using System.IO;
+using System.Security.Policy;
 
 
 [Serializable]
-[Microsoft.SqlServer.Server.SqlUserDefinedType(Format.UserDefined, MaxByteSize = -1)]
+[Microsoft.SqlServer.Server.SqlUserDefinedType(Format.UserDefined, MaxByteSize =-1,IsByteOrdered =false,IsFixedLength =false,Name = "SqlArray")]
 public struct SqlArray : INullable, IBinarySerialize
 {
     //  Private 成員
@@ -46,7 +47,16 @@ public struct SqlArray : INullable, IBinarySerialize
     }
 
     public static SqlArray operator +(SqlArray a) => a;
-    public static SqlArray operator -(SqlArray a) => new SqlArray { _data = a._data };
+    public static SqlArray operator -(SqlArray a)
+    {
+        // 檢查維度是否匹配，實際實現中應該添加更多錯誤處理
+        var result = new double[a._data.GetLength(0)];
+        for (int i = 0; i < a._data.GetLength(0); i++)
+        {
+            result[i] = -a._data[i] ;
+        }
+        return new SqlArray(result);
+    }
 
     public static SqlArray operator +(SqlArray a, SqlArray b)
     {
@@ -60,7 +70,26 @@ public struct SqlArray : INullable, IBinarySerialize
     }
 
     public static SqlArray operator -(SqlArray a, SqlArray b)
-        => a + (-b);
+    {
+        // 檢查維度是否匹配，實際實現中應該添加更多錯誤處理
+        var result = new double[a._data.GetLength(0)];
+        for (int i = 0; i < a._data.GetLength(0); i++)
+        {
+            result[i] = a._data[i] - b._data[i];
+        }
+        return new SqlArray(result);
+    }
+
+    public static SqlArray subtract(SqlArray a, SqlArray b)
+    {
+        // 檢查維度是否匹配，實際實現中應該添加更多錯誤處理
+        var result = new double[a._data.GetLength(0)];
+        for (int i = 0; i < a._data.GetLength(0); i++)
+        {
+            result[i] = a._data[i] - b._data[i];
+        }
+        return new SqlArray(result);
+    }
 
     public static SqlArray operator *(SqlArray a, SqlArray b)
     {
@@ -91,7 +120,15 @@ public struct SqlArray : INullable, IBinarySerialize
     public override string ToString()
     {
 
-        return _data.ToString();
+        string _str= string.Join(",",_data);
+        if (_str.Length > 8000)
+        {
+            return _str.Substring(0, 4000);
+        }
+        else 
+        {
+            return _str;
+        }
     }
 
     public bool IsNull
@@ -102,8 +139,6 @@ public struct SqlArray : INullable, IBinarySerialize
             return _null;
         }
     }
-
-
 
     public int Rank
     {
@@ -141,13 +176,10 @@ public struct SqlArray : INullable, IBinarySerialize
     {
         if (s.IsNull)
             return Null;
-        SqlArray returnArray = new SqlArray();
-        returnArray._data = System.Array.ConvertAll(s.Value.Split(','), Double.Parse);
 
         // 將程式碼放在此處
-        return returnArray;
+        return new SqlArray(System.Array.ConvertAll(s.Value.Split(','), Double.Parse));
     }
-
 
     public SqlArray Concate(List<SqlArray> arrays)
     {
@@ -165,18 +197,19 @@ public struct SqlArray : INullable, IBinarySerialize
     public void Read(BinaryReader r)
     {
         if (r == null) throw new ArgumentNullException("r");
-        var tmp_data = new List<double>();
-        int count = r.ReadInt32();
-        for (int i = 0; i < count; i++)
+        _null= r.ReadBoolean();
+        int len = r.ReadInt32();
+        _data = new double[len];
+        for (int i = 0; i< len; i++)
         {
-            tmp_data.Add(r.ReadDouble());
+            _data[i] = r.ReadDouble();
         }
-        _data = tmp_data.ToArray();
     }
 
     public void Write(BinaryWriter w)
     {
         if (w == null) throw new ArgumentNullException("w");
+        w.Write(_null);
         w.Write(_data.Length);
         foreach (double d in _data)
         {

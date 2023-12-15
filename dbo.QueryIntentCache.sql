@@ -1,8 +1,9 @@
 ﻿CREATE TABLE [dbo].[QueryIntentCache](
 	[id] [uniqueidentifier] NOT NULL,
 	[QueryIntent] [nvarchar](max) NULL,
-	[VectorizedQueryIntent] [dbo].[SqlArray] NULL,
-	[GeneratedTSQL] [nvarchar](max) NOT NULL,
+	[QueryIntentArray]  AS ([dbo].[SqlArray]::Parse([VectorizedQueryIntent])),
+	[VectorizedQueryIntent] [varchar](max) NULL,
+	[GeneratedTSQL] [nvarchar](max)  NULL,
 	[GeneratedData] [nvarchar](max) NULL,
 	[CreateDate] [datetime] NULL,
 	[ExecStatus] [nvarchar](256) NULL,
@@ -19,3 +20,12 @@ GO
 ALTER TABLE [dbo].[QueryIntentCache] ADD  CONSTRAINT [DF_QueryIntentCache_CreateDate]  DEFAULT (getdate()) FOR [CreateDate]
 GO
 
+
+
+CREATE TRIGGER [dbo].[Trigger_QueryIntentCache]
+    ON [dbo].[QueryIntentCache]
+    FOR DELETE, INSERT, UPDATE
+    AS
+    BEGIN
+        SET NoCount ON
+    END

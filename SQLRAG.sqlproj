@@ -28,6 +28,7 @@
     <Trustworthy>True</Trustworthy>
     <AssemblyOwner>dbo</AssemblyOwner>
     <PermissionSet>EXTERNAL_ACCESS</PermissionSet>
+    <AnsiWarnings>True</AnsiWarnings>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <OutputPath>bin\Release\</OutputPath>

@@ -121,7 +121,8 @@ public struct SqlArray : INullable, IBinarySerialize
     {
 
         string _str= string.Join(",",_data);
-        if (_str.Length > 8000)
+  
+        if (_str.Length > 4000)
         {
             return _str.Substring(0, 4000);
         }

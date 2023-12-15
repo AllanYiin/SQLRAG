@@ -1,9 +1,11 @@
 ﻿CREATE TABLE [dbo].[QueryIntentCache](
 	[id] [uniqueidentifier] NOT NULL,
 	[QueryIntent] [nvarchar](max) NULL,
-	[VectorizedQueryIntent] [varchar](max) NULL,
+	[VectorizedQueryIntent] [dbo].[SqlArray] NULL,
 	[GeneratedTSQL] [nvarchar](max) NOT NULL,
+	[GeneratedData] [nvarchar](max) NULL,
 	[CreateDate] [datetime] NULL,
+	[ExecStatus] [nvarchar](256) NULL,
  CONSTRAINT [PK_QueryIntentCache] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC

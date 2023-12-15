@@ -11,8 +11,9 @@ public partial class DistanceFunctions
     [SqlFunction]
     public static SqlDouble CosineSimilarity(SqlString vector1, SqlString vector2)
     {
-        double[] vec1 = Array.ConvertAll(vector1.Value.Split(','), Double.Parse);
-        double[] vec2 = Array.ConvertAll(vector2.Value.Split(','), Double.Parse);
+        
+        double[] vec1 = System.Array.ConvertAll(vector1.Value.Split(','), Double.Parse);
+        double[] vec2 = System.Array.ConvertAll(vector2.Value.Split(','), Double.Parse);
 
         if (vec1.Length != vec2.Length)
             return SqlDouble.Null;
@@ -31,15 +32,60 @@ public partial class DistanceFunctions
         if (normVec1 == 0.0 || normVec2 == 0.0)
             return 0;
 
-        return dotProduct / (Math.Sqrt(normVec1) * Math.Sqrt(normVec2));
+        return new SqlDouble(dotProduct / (Math.Sqrt(normVec1) * Math.Sqrt(normVec2)));
+    }
+
+    [SqlFunction]
+    public static SqlDouble CosineSimilarity(SqlArray vector1, SqlArray vector2)
+    {
+
+        double[] vec1 = vector1.Data;
+        double[] vec2 = vector2.Data;
+
+        if (vec1.Length != vec2.Length)
+            return SqlDouble.Null;
+
+        double dotProduct = 0.0;
+        double normVec1 = 0.0;
+        double normVec2 = 0.0;
+
+        for (int i = 0; i < vec1.Length; i++)
+        {
+            dotProduct += vec1[i] * vec2[i];
+            normVec1 += vec1[i] * vec1[i];
+            normVec2 += vec2[i] * vec2[i];
+        }
+
+        if (normVec1 == 0.0 || normVec2 == 0.0)
+            return 0;
+
+        return new SqlDouble(dotProduct / (Math.Sqrt(normVec1) * Math.Sqrt(normVec2)));
     }
 
 
     [SqlFunction]
     public static SqlDouble EuclideanDistance(SqlString vector1, SqlString vector2)
     {
-        double[] vec1 = Array.ConvertAll(vector1.Value.Split(','), Double.Parse);
-        double[] vec2 = Array.ConvertAll(vector2.Value.Split(','), Double.Parse);
+        double[] vec1 = System.Array.ConvertAll(vector1.Value.Split(','), Double.Parse);
+        double[] vec2 = System.Array.ConvertAll(vector2.Value.Split(','), Double.Parse);
+
+        if (vec1.Length != vec2.Length)
+            return SqlDouble.Null;
+
+        double sum = 0.0;
+        for (int i = 0; i < vec1.Length; i++)
+        {
+            sum += Math.Pow(vec1[i] - vec2[i], 2);
+        }
+
+        return Math.Sqrt(sum);
+    }
+
+    [SqlFunction]
+    public static SqlDouble EuclideanDistance(SqlArray vector1, SqlArray vector2)
+    {
+        double[] vec1 = vector1.Data;
+        double[] vec2 = vector2.Data;
 
         if (vec1.Length != vec2.Length)
             return SqlDouble.Null;
@@ -56,8 +102,8 @@ public partial class DistanceFunctions
     [SqlFunction]
     public static SqlDouble ManhattanDistance(SqlString vector1, SqlString vector2)
     {
-        double[] vec1 = Array.ConvertAll(vector1.Value.Split(','), Double.Parse);
-        double[] vec2 = Array.ConvertAll(vector2.Value.Split(','), Double.Parse);
+        double[] vec1 = System.Array.ConvertAll(vector1.Value.Split(','), Double.Parse);
+        double[] vec2 = System.Array.ConvertAll(vector2.Value.Split(','), Double.Parse);
 
         if (vec1.Length != vec2.Length)
             return SqlDouble.Null;
@@ -70,6 +116,25 @@ public partial class DistanceFunctions
 
         return sum;
     }
+
+    [SqlFunction]
+    public static SqlDouble ManhattanDistance(SqlArray vector1, SqlArray vector2)
+    {
+        double[] vec1 = vector1.Data;
+        double[] vec2 = vector2.Data;
+
+        if (vec1.Length != vec2.Length)
+            return SqlDouble.Null;
+
+        double sum = 0.0;
+        for (int i = 0; i < vec1.Length; i++)
+        {
+            sum += Math.Abs(vec1[i] - vec2[i]);
+        }
+
+        return sum;
+    }
+
 
 
     [SqlFunction]
@@ -94,8 +159,8 @@ public partial class DistanceFunctions
     [SqlFunction]
     public static SqlDouble ChebyshevDistance(SqlString vector1, SqlString vector2)
     {
-        double[] vec1 = Array.ConvertAll(vector1.Value.Split(','), Double.Parse);
-        double[] vec2 = Array.ConvertAll(vector2.Value.Split(','), Double.Parse);
+        double[] vec1 = System.Array.ConvertAll(vector1.Value.Split(','), Double.Parse);
+        double[] vec2 = System.Array.ConvertAll(vector2.Value.Split(','), Double.Parse);
 
         if (vec1.Length != vec2.Length)
             return SqlDouble.Null;
@@ -112,13 +177,36 @@ public partial class DistanceFunctions
     }
 
     [SqlFunction]
+    public static SqlDouble ChebyshevDistance(SqlArray vector1, SqlArray vector2)
+    {
+        double[] vec1 = vector1.Data;
+        double[] vec2 = vector2.Data;
+
+        if (vec1.Length != vec2.Length)
+            return SqlDouble.Null;
+
+        double maxDifference = 0.0;
+        for (int i = 0; i < vec1.Length; i++)
+        {
+            double difference = Math.Abs(vec1[i] - vec2[i]);
+            if (difference > maxDifference)
+                maxDifference = difference;
+        }
+
+        return maxDifference;
+    }
+
+
+
+
+    [SqlFunction]
     public static SqlDouble MinkowskiDistance(SqlString vector1, SqlString vector2, SqlDouble p)
     {
         if (p.Value < 1)
             return SqlDouble.Null; // p 必須大於等於1
 
-        double[] vec1 = Array.ConvertAll(vector1.Value.Split(','), Double.Parse);
-        double[] vec2 = Array.ConvertAll(vector2.Value.Split(','), Double.Parse);
+        double[] vec1 = System.Array.ConvertAll(vector1.Value.Split(','), Double.Parse);
+        double[] vec2 = System.Array.ConvertAll(vector2.Value.Split(','), Double.Parse);
 
         if (vec1.Length != vec2.Length)
             return SqlDouble.Null;
@@ -131,6 +219,79 @@ public partial class DistanceFunctions
 
         return Math.Pow(sum, 1.0 / p.Value);
     }
+
+    [SqlFunction]
+    public static SqlDouble MinkowskiDistance(SqlArray vector1, SqlArray vector2, SqlDouble p)
+    {
+        if (p.Value < 1)
+            return SqlDouble.Null; // p 必須大於等於1
+
+        double[] vec1 = vector1.Data;
+        double[] vec2 = vector2.Data;
+
+
+        if (vec1.Length != vec2.Length)
+            return SqlDouble.Null;
+
+        double sum = 0.0;
+        for (int i = 0; i < vec1.Length; i++)
+        {
+            sum += Math.Pow(Math.Abs(vec1[i] - vec2[i]), p.Value);
+        }
+
+        return Math.Pow(sum, 1.0 / p.Value);
+    }
+
+
+    [SqlFunction]
+    public static SqlInt32 LevenshteinDistance([SqlFacet(MaxSize = -1)] SqlString InputString1, [SqlFacet(MaxSize = -1)] SqlString InputString2)
+    {
+        int n = InputString1.Value.Length;
+        int m = InputString2.Value.Length;
+        int[,] d = new int[n + 1, m + 1];
+
+        // Step 1
+        if (n == 0)
+        {
+            return new SqlInt32(m);
+        }
+
+        if (m == 0)
+        {
+            return new SqlInt32(n);
+        }
+
+        // Step 2
+        for (int i = 0; i <= n; d[i, 0] = i++)
+        {
+        }
+
+        for (int j = 0; j <= m; d[0, j] = j++)
+        {
+        }
+
+        // Step 3
+        for (int i = 1; i <= n; i++)
+        {
+            //Step 4
+            for (int j = 1; j <= m; j++)
+            {
+                // Step 5
+                int cost = (InputString2.Value[j - 1] == InputString1.Value[i - 1]) ? 0 : 1;
+
+                // Step 6
+                d[i, j] = Math.Min(
+                    Math.Min(d[i - 1, j] + 1, d[i, j - 1] + 1),
+                    d[i - 1, j - 1] + cost);
+            }
+        }
+        // Step 7
+        return new SqlInt32(d[n, m]);
+    }
+
+
+
+
 }
 
 

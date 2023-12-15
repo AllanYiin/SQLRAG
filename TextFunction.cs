@@ -5,6 +5,8 @@ using System.Data.SqlTypes;
 using Microsoft.SqlServer.Server;
 using System.Text.RegularExpressions;
 using System.Collections.Generic;
+using System.Security.Cryptography;
+using Microsoft.VisualBasic;
 
 public partial class UserDefinedFunctions
 {
@@ -49,7 +51,8 @@ public partial class UserDefinedFunctions
         // 對中文的標點進行處理
         txt = Regex.Replace(txt, "([。！？\\?])([^”’])", "$1<stop>$2");
         txt = Regex.Replace(txt, "(\\.{6})([^”’])", "$1<stop>$2");
-        txt = Regex.Replace(txt, "([。！？\\?][”’])([^，。！？\\?])", "$1<stop>$2");
+        txt = Regex.Replace(txt, "([。！？\\?][”’])([^。！？\\?])", "$1<stop>$2");
+     
 
         // 移除尾部空白並按<stop>分割
         txt = txt.Trim();
@@ -57,11 +60,52 @@ public partial class UserDefinedFunctions
         return sentences;
     }
 
-    [Microsoft.SqlServer.Server.SqlFunction]
-    public static SqlString SplitText(SqlString inputText)
+    [return: SqlFacet(MaxSize = -1)]
+    [Microsoft.SqlServer.Server.SqlFunction(IsDeterministic = true)]
+    public static SqlString SplitText([SqlFacet(MaxSize = -1)] SqlString inputText)
     {
-        string returnstring = string.Join("\n\n", segAsSentence(inputText.Value));
+        string returnstring = string.Join("\r\n", segAsSentence(inputText.Value));
 
         return new SqlString (returnstring);
     }
+
+    [return: SqlFacet(MaxSize = -1)]
+    [Microsoft.SqlServer.Server.SqlFunction(IsDeterministic = true)]
+    public static SqlString ChineseFull2Half([SqlFacet(MaxSize = -1)] SqlString inputText)
+    {
+        string returnstring = string.Join("\r\n", segAsSentence(inputText.Value));
+
+        return new SqlString(returnstring);
+    }
+
+    [return: SqlFacet(MaxSize = -1)]
+    [Microsoft.SqlServer.Server.SqlFunction(IsDeterministic = true)]
+    public static SqlString ChineseHalf2Full([SqlFacet(MaxSize = -1)] SqlString inputText)
+    {
+        string returnstring = string.Join("\r\n", segAsSentence(inputText.Value));
+
+        return new SqlString(returnstring);
+    }
+
+
+    [Microsoft.SqlServer.Server.SqlFunction]
+    [return: SqlFacet(MaxSize = -1)]
+    public static SqlString ToTraditionalChinese([SqlFacet(MaxSize = -1)] SqlString InputString)
+    {
+        // 將程式碼放在此處
+        return new SqlString(Microsoft.VisualBasic.Strings.StrConv(InputString.Value, Microsoft.VisualBasic.VbStrConv.TraditionalChinese, 2052));
+    }
+
+    [Microsoft.SqlServer.Server.SqlFunction]
+    [return: SqlFacet(MaxSize = -1)]
+    public static SqlString ToSimplifiedChinese([SqlFacet(MaxSize = -1)] SqlString InputString)
+    {
+
+        return new SqlString(Microsoft.VisualBasic.Strings.StrConv(InputString.Value, Microsoft.VisualBasic.VbStrConv.SimplifiedChinese, 2052));
+    }
+
+
+
+
+
 }

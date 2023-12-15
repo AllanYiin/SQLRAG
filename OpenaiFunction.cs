@@ -10,6 +10,7 @@ using System.IO;
 using System.Reflection;
 using System.Data.Common;
 using System.Collections.ObjectModel;
+using System.CodeDom.Compiler;
 
 
 public partial class OpenaiFunction
@@ -39,8 +40,9 @@ public partial class OpenaiFunction
         }
     }
 
+    [return: SqlFacet(MaxSize = -1)]
     [SqlFunction(DataAccess = DataAccessKind.Read)]
-    public static SqlString GetEmbedding(SqlString inputText)
+    public static SqlArray GetEmbedding([SqlFacet(MaxSize = -1)] SqlString inputText)
     {
        
         string apiKey = GetKey();
@@ -65,18 +67,23 @@ public partial class OpenaiFunction
             using (StreamReader streamReader = new StreamReader(response.GetResponseStream()))
             {
                 string result = streamReader.ReadToEnd();
-                return new SqlString(ParseEmbedding(result)); // 返回結果
+                return SqlArray.Parse(ParseEmbedding(result)); // 返回結果
             }
         }
         catch (Exception ex)
         {
             // 錯誤處理
-            return new SqlString($"Error: {ex.Message}");
+            throw ex;
         }
     }
 
+
+
+
+
+    [return: SqlFacet(MaxSize = -1)]
     [SqlFunction(DataAccess = DataAccessKind.Read)]
-    public static SqlString ChatCompletion(SqlString inputPrompt, SqlString systemProimpt = default(SqlString), SqlString model = default(SqlString))
+    public static SqlString ChatCompletion([SqlFacet(MaxSize = -1)] SqlString inputPrompt, [SqlFacet(MaxSize = -1)] SqlString systemProimpt = default(SqlString), SqlString model = default(SqlString))
     {
        ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
         string apiKey = GetKey();
@@ -141,5 +148,22 @@ public partial class OpenaiFunction
         // 清理和格式化數據
         return responseString;
     }
+
+
+
+   
+    [return: SqlFacet(MaxSize = -1)]
+    [SqlFunction(DataAccess = DataAccessKind.Read)]
+    public static SqlString Translate2zhtw([SqlFacet(MaxSize = -1)] SqlString inputPrompt, [SqlFacet(MaxSize = -1)] SqlString model = default(SqlString))
+    {
+        string _prompt = "#zh-TW 後續我將提供你一段文字內容，請直接翻譯為unicode文字內容，\"\"\"\n\r{0}\n\r\"\"\"\n\r請直接輸出無須說明";
+        string _system_prompt = "你是一個專業的中文翻譯官，你懂得如何使用恰如其分的修辭來翻譯在文本下的潛藏之意。";
+        var results = ChatCompletion(_prompt, _system_prompt, model.Value);
+        return new SqlString(results.Value);
+
+
+    }
+
+
 
 }

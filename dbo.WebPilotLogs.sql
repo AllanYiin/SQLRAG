@@ -1,0 +1,5 @@
+﻿CREATE TABLE [dbo].[WebPilotLogs]
+(
+	[Id] UNIQUEIDENTIFIER NOT NULL PRIMARY KEY DEFAULT (newid()), 
+    [ParentId] UNIQUEIDENTIFIER NULL
+)

@@ -70,11 +70,15 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Net" />
+    <Reference Include="Microsoft.VisualBasic" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DistanceFunctions.cs" />
     <Compile Include="OpenaiFunction.cs" />
     <Compile Include="TextFunction.cs" />
+    <Compile Include="SqlRagStoredProcedure.cs" />
+    <Compile Include="RagFunction.cs" />
+    <Compile Include="SqlArray.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="SQLRAG.publish.xml" />
@@ -98,5 +102,6 @@
     <Build Include="dbo.EncryptedKeys.sql" />
     <Build Include="dbo.QueryIntentCache.sql" />
     <Build Include="SqlRAGCertificate.sql" />
+    <Build Include="dbo.WebPilotLogs.sql" />
   </ItemGroup>
 </Project>

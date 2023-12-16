@@ -9,6 +9,7 @@
 ## 安裝
 1. 首先要啟用SQL Server CLR:   
 ```sql
+	use SQLRAG
 	sp_configure 'show advanced options', 1;  
 	RECONFIGURE;  
 	sp_configure 'clr enabled', 1;  
@@ -17,13 +18,14 @@
 
 2. 如果要使用OpenaiFunction，之前的做法是在OpenaiFunction.cs中輸入你實際的OPENAI_API_KEY，這樣的做法是不能確保API KEY的安全的。在這一版中，我在SqlRAG資料庫中增加了dbo.EncryptedKeys資料表，其中KeyValue部分透過憑證加密。看起來複雜但我已經將自動調用的部分處理好，開發者只需要透過以下SQL 語法將API KEY加密後寫入資料表中即可。  
 ```sql
+	use SQLRAG
 	Declare @cleartext varchar(512)='sk-輸入你的OPENAI_API_KEYAPI KEY'
 	Declare @encrytext varbinary(4000)=EncryptByCert(Cert_ID('SqlRAGCertificate'), @cleartext) 
 
 	INSERT INTO [SQLRAG].[dbo].[EncryptedKeys] 
     	VALUES ( N'OPENAI_API_KEY', N'用於調用OPENAI所用之API KEY',@encrytext );  
 ```
-或者是像透過顯式的聲明基於哪個憑證以及對應的密碼來進行解密:
+之後則需要透過顯式的聲明基於哪個憑證以及對應的密碼來進行解密:
 ```sql
 
 DecryptByCert(Cert_ID('SqlRAGCertificate'), EncryptByCert(Cert_ID('SqlRAGCertificate'), @cleartext) ,'P@ssw0rd')

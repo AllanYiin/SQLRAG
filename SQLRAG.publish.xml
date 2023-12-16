@@ -1,10 +1,22 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-    <IncludeCompositeObjects>True</IncludeCompositeObjects>
+    <IncludeCompositeObjects>False</IncludeCompositeObjects>
     <TargetDatabaseName>SQLRAG</TargetDatabaseName>
     <DeployScriptFileName>SQLRAG.sql</DeployScriptFileName>
     <ProfileVersionNumber>1</ProfileVersionNumber>
     <TargetConnectionString>Data Source=.;Persist Security Info=True;User ID=sa;Pooling=False;Multiple Active Result Sets=False;Connect Timeout=60;Encrypt=True;Trust Server Certificate=True;Command Timeout=0</TargetConnectionString>
+    <BlockOnPossibleDataLoss>False</BlockOnPossibleDataLoss>
+    <DeployDatabaseInSingleUserMode>False</DeployDatabaseInSingleUserMode>
+    <NoAlterStatementsToChangeCLRTypes>False</NoAlterStatementsToChangeCLRTypes>
+    <IncludeTransactionalScripts>True</IncludeTransactionalScripts>
+    <AllowDropBlockingAssemblies>True</AllowDropBlockingAssemblies>
+    <DoNotAlterReplicatedObjects>False</DoNotAlterReplicatedObjects>
+    <DropObjectsNotInSource>False</DropObjectsNotInSource>
+    <DoNotDropAssemblies>False</DoNotDropAssemblies>
+    <AllowTableRecreation>False</AllowTableRecreation>
+    <DoNotAlterChangeDataCaptureObjects>False</DoNotAlterChangeDataCaptureObjects>
+    <BackupDatabaseBeforeChanges>True</BackupDatabaseBeforeChanges>
+    <DoNotDropClrUserDefinedTypes>False</DoNotDropClrUserDefinedTypes>
   </PropertyGroup>
 </Project>

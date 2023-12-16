@@ -9,8 +9,7 @@
     <ProjectGuid>{7e86c45f-4d32-4ab0-af50-79b6270edaee}</ProjectGuid>
     <DSP>Microsoft.Data.Tools.Schema.Sql.Sql160DatabaseSchemaProvider</DSP>
     <OutputType>Database</OutputType>
-    <RootPath>
-    </RootPath>
+    <RootPath />
     <RootNamespace>SQLRAG</RootNamespace>
     <AssemblyName>SQLRAG</AssemblyName>
     <ModelCollation>1028,CI</ModelCollation>
@@ -27,7 +26,7 @@
     <DefaultCollation>Chinese_Taiwan_Stroke_CI_AS</DefaultCollation>
     <Trustworthy>True</Trustworthy>
     <AssemblyOwner>dbo</AssemblyOwner>
-    <PermissionSet>EXTERNAL_ACCESS</PermissionSet>
+    <PermissionSet>SAFE</PermissionSet>
     <AnsiWarnings>True</AnsiWarnings>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -47,16 +46,16 @@
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
+    <Optimize>true</Optimize>
     <DefineDebug>true</DefineDebug>
     <DefineTrace>true</DefineTrace>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <PlatformTarget>x64</PlatformTarget>
+    <RunSqlCodeAnalysis>True</RunSqlCodeAnalysis>
   </PropertyGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">11.0</VisualStudioVersion>
-    <!-- Default to the v11.0 targets path if the targets file for the current VS version is not found -->
     <SSDTExists Condition="Exists('$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets')">True</SSDTExists>
     <VisualStudioVersion Condition="'$(SSDTExists)' == ''">11.0</VisualStudioVersion>
   </PropertyGroup>
@@ -70,15 +69,11 @@
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="System.Net" />
     <Reference Include="Microsoft.VisualBasic" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DistanceFunctions.cs" />
-    <Compile Include="OpenaiFunction.cs" />
     <Compile Include="TextFunction.cs" />
-    <Compile Include="SqlRagStoredProcedure.cs" />
-    <Compile Include="RagFunction.cs" />
     <Compile Include="SqlArray.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -90,6 +85,7 @@
     <None Include="assets\ChatCompletion.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="SQLRAG_2.publish.xml" />
   </ItemGroup>
   <ItemGroup>
     <None Include="assets\ChatCompletion_demo.sql">
@@ -99,10 +95,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
-  <ItemGroup>
-    <Build Include="dbo.EncryptedKeys.sql" />
-    <Build Include="dbo.QueryIntentCache.sql" />
-    <Build Include="SqlRAGCertificate.sql" />
-    <Build Include="dbo.WebPilotLogs.sql" />
-  </ItemGroup>
+  <PropertyGroup>
+    <PreBuildEvent />
+  </PropertyGroup>
 </Project>

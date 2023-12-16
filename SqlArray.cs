@@ -11,7 +11,7 @@ using System.Security.Policy;
 
 
 [Serializable]
-[Microsoft.SqlServer.Server.SqlUserDefinedType(Format.UserDefined, MaxByteSize =-1,IsByteOrdered =false,IsFixedLength =false,Name = "SqlArray")]
+[Microsoft.SqlServer.Server.SqlUserDefinedType(Format.UserDefined, MaxByteSize =-1,IsByteOrdered =true,IsFixedLength =false,Name = "SqlArray")]
 public struct SqlArray : INullable, IBinarySerialize
 {
     //  Private 成員
@@ -50,8 +50,8 @@ public struct SqlArray : INullable, IBinarySerialize
     public static SqlArray operator -(SqlArray a)
     {
         // 檢查維度是否匹配，實際實現中應該添加更多錯誤處理
-        var result = new double[a._data.GetLength(0)];
-        for (int i = 0; i < a._data.GetLength(0); i++)
+        var result = new double[a._data.Length];
+        for (int i = 0; i < a._data.Length; i++)
         {
             result[i] = -a._data[i] ;
         }
@@ -61,8 +61,8 @@ public struct SqlArray : INullable, IBinarySerialize
     public static SqlArray operator +(SqlArray a, SqlArray b)
     {
         // 檢查維度是否匹配，實際實現中應該添加更多錯誤處理
-        var result = new double[a._data.GetLength(0)];
-        for (int i = 0; i < a._data.GetLength(0); i++)
+        var result = new double[a._data.Length];
+        for (int i = 0; i < a._data.Length; i++)
         {
             result[i] = a._data[i] + b._data[i];
         }
@@ -72,8 +72,8 @@ public struct SqlArray : INullable, IBinarySerialize
     public static SqlArray operator -(SqlArray a, SqlArray b)
     {
         // 檢查維度是否匹配，實際實現中應該添加更多錯誤處理
-        var result = new double[a._data.GetLength(0)];
-        for (int i = 0; i < a._data.GetLength(0); i++)
+        var result = new double[a._data.Length];
+        for (int i = 0; i < a._data.Length; i++)
         {
             result[i] = a._data[i] - b._data[i];
         }
@@ -83,8 +83,8 @@ public struct SqlArray : INullable, IBinarySerialize
     public static SqlArray subtract(SqlArray a, SqlArray b)
     {
         // 檢查維度是否匹配，實際實現中應該添加更多錯誤處理
-        var result = new double[a._data.GetLength(0)];
-        for (int i = 0; i < a._data.GetLength(0); i++)
+        var result = new double[a._data.Length];
+        for (int i = 0; i < a._data.Length; i++)
         {
             result[i] = a._data[i] - b._data[i];
         }
@@ -94,8 +94,8 @@ public struct SqlArray : INullable, IBinarySerialize
     public static SqlArray operator *(SqlArray a, SqlArray b)
     {
         // 檢查維度是否匹配，實際實現中應該添加更多錯誤處理
-        var result = new double[a._data.GetLength(0)];
-        for (int i = 0; i < a._data.GetLength(0); i++)
+        var result = new double[a._data.Length];
+        for (int i = 0; i < a._data.Length; i++)
         {
             result[i] = a._data[i] * b._data[i];
         }
@@ -108,8 +108,8 @@ public struct SqlArray : INullable, IBinarySerialize
         {
             throw new DivideByZeroException();
         }
-        var result = new double[a._data.GetLength(0)];
-        for (int i = 0; i < a._data.GetLength(0); i++)
+        var result = new double[a._data.Length];
+        for (int i = 0; i < a._data.Length; i++)
         {
             result[i] = a._data[i] / b._data[i];
         }
@@ -181,6 +181,8 @@ public struct SqlArray : INullable, IBinarySerialize
         // 將程式碼放在此處
         return new SqlArray(System.Array.ConvertAll(s.Value.Split(','), Double.Parse));
     }
+
+
 
     public SqlArray Concate(List<SqlArray> arrays)
     {

@@ -5,7 +5,7 @@ VisualStudioVersion = 17.8.34309.116
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "SQLRAG", "SQLRAG.sqlproj", "{7E86C45F-4D32-4AB0-AF50-79B6270EDAEE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleApp1", "..\ConsoleApp1\ConsoleApp1.csproj", "{28C73DD0-9421-428E-B41D-0E637E3998B1}"
+Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "SQLRAG.application", "..\SQLRAG.application\SQLRAG.application.sqlproj", "{60C728D1-4969-4138-8344-FB002DED1F59}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -19,10 +19,12 @@ Global
 		{7E86C45F-4D32-4AB0-AF50-79B6270EDAEE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7E86C45F-4D32-4AB0-AF50-79B6270EDAEE}.Release|Any CPU.Build.0 = Release|Any CPU
 		{7E86C45F-4D32-4AB0-AF50-79B6270EDAEE}.Release|Any CPU.Deploy.0 = Release|Any CPU
-		{28C73DD0-9421-428E-B41D-0E637E3998B1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{28C73DD0-9421-428E-B41D-0E637E3998B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{28C73DD0-9421-428E-B41D-0E637E3998B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{28C73DD0-9421-428E-B41D-0E637E3998B1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{60C728D1-4969-4138-8344-FB002DED1F59}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{60C728D1-4969-4138-8344-FB002DED1F59}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{60C728D1-4969-4138-8344-FB002DED1F59}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{60C728D1-4969-4138-8344-FB002DED1F59}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{60C728D1-4969-4138-8344-FB002DED1F59}.Release|Any CPU.Build.0 = Release|Any CPU
+		{60C728D1-4969-4138-8344-FB002DED1F59}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

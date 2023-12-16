@@ -5,7 +5,7 @@ VisualStudioVersion = 17.8.34309.116
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "SQLRAG", "SQLRAG.sqlproj", "{7E86C45F-4D32-4AB0-AF50-79B6270EDAEE}"
 EndProject
-Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "SQLRAG.application", "..\SQLRAG.application\SQLRAG.application.sqlproj", "{60C728D1-4969-4138-8344-FB002DED1F59}"
+Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "SQLRAG.application", "SQLRAG.application\SQLRAG.application.sqlproj", "{60C728D1-4969-4138-8344-FB002DED1F59}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

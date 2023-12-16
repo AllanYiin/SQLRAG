@@ -105,7 +105,67 @@ public partial class UserDefinedFunctions
     }
 
 
+    [Microsoft.SqlServer.Server.SqlFunction]
+    [return: SqlFacet(MaxSize = -1)]
+    public static SqlString RegexReplace([SqlFacet(MaxSize = -1)] string InputString, string PattermString, string ReplaceWord)
+    {
 
+        MatchCollection matchcollection = Regex.Matches(InputString, PattermString, ExpressionOptions);
+        if (matchcollection != null)
+        {
 
+            foreach (Match item in matchcollection)
+            {
+                InputString = InputString.Replace(item.Value, ReplaceWord);
+            }
+            return new SqlString(InputString);
+
+        }
+        else
+        {
+            return SqlString.Null;
+        }
+    }
+
+    private const RegexOptions ExpressionOptions = RegexOptions.Singleline | RegexOptions.Multiline | RegexOptions.IgnoreCase;
+
+    [Microsoft.SqlServer.Server.SqlFunction]
+    public static SqlString RegexMatch([SqlFacet(MaxSize = -1)] string InputString, string PattermString, int Index)
+    {
+        if (string.IsNullOrEmpty(InputString))
+        {
+            return SqlString.Null;
+        }
+        else
+        {
+
+            MatchCollection matchcollection = Regex.Matches(InputString, PattermString, ExpressionOptions);
+            if (matchcollection != null)
+            {
+                if (Index == 0)
+                {
+                    string returnstring = "";
+                    foreach (Match item in matchcollection)
+                    {
+                        returnstring += item.Value;
+                    }
+                    return new SqlString(returnstring);
+                }
+                else if (Index <= matchcollection.Count && Index >= 1)
+                {
+
+                    return new SqlString(matchcollection[Index - 1].Value);
+                }
+                else
+                {
+                    return SqlString.Null;
+                }
+            }
+            else
+            {
+                return SqlString.Null;
+            }
+        }
+    }
 
 }

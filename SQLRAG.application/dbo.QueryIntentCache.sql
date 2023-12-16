@@ -1,7 +1,7 @@
 ﻿CREATE TABLE [dbo].[QueryIntentCache](
 	[id] [uniqueidentifier] NOT NULL,
 	[QueryIntent] [nvarchar](max) NULL,
-	[QueryIntentArray]  AS (dbo.SqlArray::Parse([VectorizedQueryIntent])),
+	[QueryIntentArray]  AS (dbo.SqlArray::Parse([VectorizedQueryIntent])) PERSISTED,
 	[VectorizedQueryIntent] [varchar](max) NULL,
 	[GeneratedTSQL] [nvarchar](max)  NULL,
 	[GeneratedData] [nvarchar](max) NULL,

@@ -26,7 +26,7 @@
     <DefaultCollation>Chinese_Taiwan_Stroke_CI_AS</DefaultCollation>
     <Trustworthy>True</Trustworthy>
     <IncludeSchemaNameInFileName>True</IncludeSchemaNameInFileName>
-    <GenerateCreateScript>True</GenerateCreateScript>
+    <GenerateCreateScript>False</GenerateCreateScript>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <OutputPath>bin\Release\</OutputPath>
@@ -64,7 +64,9 @@
   </ItemGroup>
   <ItemGroup>
     <Build Include="dbo.EncryptedKeys.sql" />
-    <Build Include="dbo.QueryIntentCache.sql" />
+    <Build Include="dbo.QueryIntentCache.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Build>
     <Build Include="dbo.WebPilotLogs.sql" />
     <Build Include="SqlRAGCertificate.sql" />
   </ItemGroup>
@@ -75,14 +77,6 @@
     <Compile Include="SqlFunction1.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\SQLRAG\SQLRAG.sqlproj">
-      <Name>SQLRAG</Name>
-      <Project>{7e86c45f-4d32-4ab0-af50-79b6270edaee}</Project>
-      <Private>True</Private>
-      <SuppressMissingDependenciesErrors>True</SuppressMissingDependenciesErrors>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <Reference Include="System.Net" />
     <Reference Include="System.Data" />
     <Reference Include="System" />
@@ -90,5 +84,13 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="SQLRAG.application.publish.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\SQLRAG\SQLRAG.sqlproj">
+      <Name>SQLRAG</Name>
+      <Project>{7e86c45f-4d32-4ab0-af50-79b6270edaee}</Project>
+      <Private>True</Private>
+      <SuppressMissingDependenciesErrors>True</SuppressMissingDependenciesErrors>
+    </ProjectReference>
   </ItemGroup>
 </Project>

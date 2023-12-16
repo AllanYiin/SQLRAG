@@ -47,16 +47,16 @@ public struct SqlArray : INullable, IBinarySerialize
     }
 
     public static SqlArray operator +(SqlArray a) => a;
-    public static SqlArray operator -(SqlArray a)
-    {
-        // 檢查維度是否匹配，實際實現中應該添加更多錯誤處理
-        var result = new double[a._data.Length];
-        for (int i = 0; i < a._data.Length; i++)
-        {
-            result[i] = -a._data[i] ;
-        }
-        return new SqlArray(result);
-    }
+    //public static SqlArray operator -(SqlArray a)
+    //{
+    //    // 檢查維度是否匹配，實際實現中應該添加更多錯誤處理
+    //    var result = new double[a._data.Length];
+    //    for (int i = 0; i < a._data.Length; i++)
+    //    {
+    //        result[i] = -a._data[i] ;
+    //    }
+    //    return new SqlArray(result);
+    //}
 
     public static SqlArray operator +(SqlArray a, SqlArray b)
     {
@@ -69,74 +69,64 @@ public struct SqlArray : INullable, IBinarySerialize
         return new SqlArray(result);
     }
 
-    public static SqlArray operator -(SqlArray a, SqlArray b)
-    {
-        // 檢查維度是否匹配，實際實現中應該添加更多錯誤處理
-        var result = new double[a._data.Length];
-        for (int i = 0; i < a._data.Length; i++)
-        {
-            result[i] = a._data[i] - b._data[i];
-        }
-        return new SqlArray(result);
-    }
-
-    public static SqlArray subtract(SqlArray a, SqlArray b)
-    {
-        // 檢查維度是否匹配，實際實現中應該添加更多錯誤處理
-        var result = new double[a._data.Length];
-        for (int i = 0; i < a._data.Length; i++)
-        {
-            result[i] = a._data[i] - b._data[i];
-        }
-        return new SqlArray(result);
-    }
-
-    public static SqlArray operator *(SqlArray a, SqlArray b)
-    {
-        // 檢查維度是否匹配，實際實現中應該添加更多錯誤處理
-        var result = new double[a._data.Length];
-        for (int i = 0; i < a._data.Length; i++)
-        {
-            result[i] = a._data[i] * b._data[i];
-        }
-        return new SqlArray(result);
-    }
-
-    public static SqlArray operator /(SqlArray a, SqlArray b)
-    {
-        if (System.Array.Exists(b._data, x => x == 0))
-        {
-            throw new DivideByZeroException();
-        }
-        var result = new double[a._data.Length];
-        for (int i = 0; i < a._data.Length; i++)
-        {
-            result[i] = a._data[i] / b._data[i];
-        }
-        return new SqlArray(result);
-    }
+    //public static SqlArray operator -(SqlArray a, SqlArray b)
+    //{
+    //    // 檢查維度是否匹配，實際實現中應該添加更多錯誤處理
+    //    var result = new double[a._data.Length];
+    //    for (int i = 0; i < a._data.Length; i++)
+    //    {
+    //        result[i] = a._data[i] - b._data[i];
+    //    }
+    //    return new SqlArray(result);
+    //}
 
 
+    //public static SqlArray operator *(SqlArray a, SqlArray b)
+    //{
+    //    // 檢查維度是否匹配，實際實現中應該添加更多錯誤處理
+    //    var result = new double[a._data.Length];
+    //    for (int i = 0; i < a._data.Length; i++)
+    //    {
+    //        result[i] = a._data[i] * b._data[i];
+    //    }
+    //    return new SqlArray(result);
+    //}
+
+    //public static SqlArray operator /(SqlArray a, SqlArray b)
+    //{
+    //    if (System.Array.Exists(b._data, x => x == 0))
+    //    {
+    //        throw new DivideByZeroException();
+    //    }
+    //    var result = new double[a._data.Length];
+    //    for (int i = 0; i < a._data.Length; i++)
+    //    {
+    //        result[i] = a._data[i] / b._data[i];
+    //    }
+    //    return new SqlArray(result);
+    //}
+
+    [return: SqlFacet(MaxSize = -1)]
+    [SqlMethod(IsDeterministic = true, IsPrecise = false)]
     public override string ToString()
     {
 
         string _str= string.Join(",",_data);
-  
-        if (_str.Length > 4000)
-        {
-            return _str.Substring(0, 4000);
-        }
-        else 
-        {
-            return _str;
-        }
+        return _str;
+        //if (_str.Length > 4000)
+        //{
+        //    return _str.Substring(0, 4000);
+        //}
+        //else 
+        //{
+        //    return _str;
+        //}
     }
 
     public bool IsNull
     {
         get
         {
-            // 將程式碼放在此處
             return _null;
         }
     }
@@ -145,7 +135,7 @@ public struct SqlArray : INullable, IBinarySerialize
     {
         get
         {
-            // 將程式碼放在此處
+
             return _data.Rank;
         }
     }
@@ -154,7 +144,6 @@ public struct SqlArray : INullable, IBinarySerialize
     {
         get
         {
-            // 將程式碼放在此處
             return _data.Length;
         }
     }
@@ -163,7 +152,6 @@ public struct SqlArray : INullable, IBinarySerialize
     {
         get
         {
-            // 將程式碼放在此處
             return _data.LongLength;
         }
     }
@@ -172,7 +160,7 @@ public struct SqlArray : INullable, IBinarySerialize
 
 
 
-    [SqlMethod(OnNullCall = true)]
+    [SqlMethod(IsDeterministic = true, OnNullCall = true)]
     public static SqlArray Parse(SqlString s)
     {
         if (s.IsNull)
@@ -180,6 +168,36 @@ public struct SqlArray : INullable, IBinarySerialize
 
         // 將程式碼放在此處
         return new SqlArray(System.Array.ConvertAll(s.Value.Split(','), Double.Parse));
+    }
+
+    [SqlMethod(IsDeterministic = true, OnNullCall = true)]
+    public static SqlArray add(SqlArray a, SqlArray b)
+    {
+        if (a._data.Length != b._data.Length)
+        {
+            throw new ArgumentException("維度不匹配");
+        }
+        var result = new double[a._data.Length];
+        for (int i = 0; i < a._data.Length; i++)
+        {
+            result[i] = a._data[i] + b._data[i];
+        }
+        return new SqlArray(result);
+    }
+
+    [SqlMethod(IsDeterministic = true, OnNullCall = true)]
+    public static SqlArray subtract(SqlArray a, SqlArray b)
+    {
+        if (a._data.Length != b._data.Length)
+        {
+            throw new ArgumentException("維度不匹配");
+        }
+        var result = new double[a._data.Length];
+        for (int i = 0; i < a._data.Length; i++)
+        {
+            result[i] = a._data[i] - b._data[i];
+        }
+        return new SqlArray(result);
     }
 
 

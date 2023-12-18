@@ -36,7 +36,6 @@ public partial class DistanceFunctions
         return new SqlDouble(dotProduct / (Math.Sqrt(normVec1) * Math.Sqrt(normVec2)));
     }
 
-
  
     [SqlFunction]
     public static SqlDouble EuclideanDistance(SqlArray vector1, SqlArray vector2)

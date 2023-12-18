@@ -83,6 +83,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="SQLRAG.application.publish.xml" />
+    <None Include="postdeployscript.sql" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\SQLRAG\SQLRAG.sqlproj">

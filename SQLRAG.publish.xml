@@ -10,13 +10,26 @@
     <DeployDatabaseInSingleUserMode>False</DeployDatabaseInSingleUserMode>
     <NoAlterStatementsToChangeCLRTypes>False</NoAlterStatementsToChangeCLRTypes>
     <IncludeTransactionalScripts>True</IncludeTransactionalScripts>
-    <AllowDropBlockingAssemblies>True</AllowDropBlockingAssemblies>
+    <AllowDropBlockingAssemblies>False</AllowDropBlockingAssemblies>
     <DoNotAlterReplicatedObjects>False</DoNotAlterReplicatedObjects>
-    <DropObjectsNotInSource>False</DropObjectsNotInSource>
-    <DoNotDropAssemblies>False</DoNotDropAssemblies>
+    <DropObjectsNotInSource>True</DropObjectsNotInSource>
+    <DoNotDropAssemblies>True</DoNotDropAssemblies>
     <AllowTableRecreation>False</AllowTableRecreation>
     <DoNotAlterChangeDataCaptureObjects>False</DoNotAlterChangeDataCaptureObjects>
     <BackupDatabaseBeforeChanges>True</BackupDatabaseBeforeChanges>
-    <DoNotDropClrUserDefinedTypes>False</DoNotDropClrUserDefinedTypes>
+    <DoNotDropClrUserDefinedTypes>True</DoNotDropClrUserDefinedTypes>
+    <AllowExternalLibraryPaths>True</AllowExternalLibraryPaths>
+    <DropIndexesNotInSource>False</DropIndexesNotInSource>
+    <DropConstraintsNotInSource>False</DropConstraintsNotInSource>
+    <DropDmlTriggersNotInSource>False</DropDmlTriggersNotInSource>
+    <DropExtendedPropertiesNotInSource>False</DropExtendedPropertiesNotInSource>
+    <DoNotDropScalarValuedFunctions>True</DoNotDropScalarValuedFunctions>
+    <DoNotDropTables>True</DoNotDropTables>
+    <DoNotDropUserDefinedDataTypes>True</DoNotDropUserDefinedDataTypes>
+    <DoNotDropUserDefinedTableTypes>True</DoNotDropUserDefinedTableTypes>
+    <DoNotDropDefaults>True</DoNotDropDefaults>
+    <DoNotDropCertificates>True</DoNotDropCertificates>
+    <DoNotDropColumnMasterKeys>True</DoNotDropColumnMasterKeys>
+    <DoNotDropColumnEncryptionKeys>True</DoNotDropColumnEncryptionKeys>
   </PropertyGroup>
 </Project>

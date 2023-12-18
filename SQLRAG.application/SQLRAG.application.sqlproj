@@ -65,7 +65,7 @@
   <ItemGroup>
     <Build Include="dbo.EncryptedKeys.sql" />
     <Build Include="dbo.QueryIntentCache.sql">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>DoNotCopy</CopyToOutputDirectory>
     </Build>
     <Build Include="dbo.WebPilotLogs.sql" />
     <Build Include="SqlRAGCertificate.sql" />
@@ -74,7 +74,6 @@
     <Compile Include="OpenaiFunction.cs" />
     <Compile Include="RagFunction.cs" />
     <Compile Include="SqlRagStoredProcedure.cs" />
-    <Compile Include="SqlFunction1.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System.Net" />

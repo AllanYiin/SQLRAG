@@ -13,15 +13,14 @@ public partial class RagFunctions
     {
         using (SqlConnection connection = new SqlConnection("context connection=true"))
         {
-
+            SqlArray embedded = OpenaiFunction.GetEmbedding(question);
             connection.Open();
-            SqlCommand command = new SqlCommand("Declare @embedded SqlArray\r\nset @embedded=SqlRAG.dbo.GetEmbedding(@question)\r\n\r\nSELECT top 1 [GeneratedTSQL]\r\nFROM (\r\nSELECT [QueryIntent]\r\n      ,[GeneratedTSQL]\r\n\t  ,[CreateDate]\r\n\t  ,SqlRAG.dbo.CosineSimilarity(@embedded,VectorizedQueryIntent) as cosine_similarity\r\n\t  ,1-SqlRAG.dbo.EuclideanDistance(@embedded,VectorizedQueryIntent) as euclidean_similarity\r\n\t  ,1-SqlRAG.dbo.MinkowskiDistance(@embedded,VectorizedQueryIntent,2.5) as minkowski_similarity\r\n  FROM [SqlRAG].[dbo].[QueryIntentCache] \r\n  where ExecStatus is null) A\r\n  WHERE (cosine_similarity>=0.96) or (cosine_similarity>=0.90 and euclidean_similarity>0.70)\r\n  order by cosine_similarity desc", connection);
-            SqlParameter paraQuestion = new SqlParameter("question", question.Value);
-            command.Parameters.Add(paraQuestion);
+            SqlCommand command = new SqlCommand("Declare @embedded SqlArray  \r\nset @embedded=SqlArray::Parse(@embedded_string)    \r\nselect top 1 [GeneratedTSQL]\r\nFROM\r\n(SELECT [QueryIntent]     \r\n,[GeneratedTSQL]\r\n,[CreateDate]\r\n,SqlRAG.dbo.CosineSimilarity(@embedded,VectorizedQueryIntent) as cosine_similarity\r\n,1-SqlRAG.dbo.EuclideanDistance(@embedded,VectorizedQueryIntent) as euclidean_similarity\r\nFROM [SqlRAG].[dbo].[QueryIntentCache]\r\nwhere ExecStatus is null) A\r\nWHERE (cosine_similarity>=0.96) or (cosine_similarity>=0.90 and euclidean_similarity>0.70) or (cosine_similarity=-1 and euclidean_similarity>-1)\r\norder by cosine_similarity desc", connection);
+            SqlParameter paraEmbedded = new SqlParameter("embedded_string", SqlDbType.NVarChar,-1);
+            paraEmbedded.Value = embedded.ToString();
+            command.Parameters.Add(paraEmbedded);
             return new SqlString((string)command.ExecuteScalar());
-            //SqlContext.Pipe.ExecuteAndSend(command);
-            //SqlDataReader r = command.ExecuteReader();
-            //SqlContext.Pipe.Send(r);
+      
 
 
 

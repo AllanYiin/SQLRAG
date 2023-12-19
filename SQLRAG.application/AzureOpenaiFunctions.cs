@@ -1,24 +1,16 @@
 ﻿using System;
 using System.Data;
 using System.Data.SqlClient;
-using System.Net;
 using System.Data.SqlTypes;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.SqlServer.Server;
 using System.IO;
+using System.Net;
 using System.Reflection;
-using System.Data.Common;
-using System.Collections.ObjectModel;
-using System.CodeDom.Compiler;
+using System.Security.Policy;
 using System.Text.RegularExpressions;
+using Microsoft.SqlServer.Server;
 
-
-
-public partial class OpenaiFunction
+public partial class AzureOpenaiFunction
 {
-
-
 
     private static string GetKey()
     {
@@ -27,10 +19,54 @@ public partial class OpenaiFunction
         {
             conn.Open();
             SqlCommand cmd = new SqlCommand(
-                @"Declare @encrytext varbinary(4000)=(SELECT  [KeyValue] FROM [SQLRAG].[dbo].[EncryptedKeys] WHERE  [KeyName]='OPENAI_API_KEY')
+                @"Declare @encrytext varbinary(4000)=(SELECT  [KeyValue] FROM [SQLRAG].[dbo].[EncryptedKeys] WHERE  [KeyName]='AZURE_OPENAI_API_KEY')
                     Declare @decrytext varchar(512)=DecryptByCert(Cert_ID('SqlRAGCertificate'),@encrytext,N'P@ssw0rd')
                     select @decrytext ", conn);
-        
+
+            using (SqlDataReader reader = cmd.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    return (string)reader[0];
+                }
+            }
+            return string.Empty;
+        }
+    }
+
+    private static string GetEndpoint()
+    {
+        System.Data.SqlClient.SqlConnection.ColumnEncryptionKeyCacheTtl = TimeSpan.Zero;
+        using (SqlConnection conn = new SqlConnection("context connection=true"))
+        {
+            conn.Open();
+            SqlCommand cmd = new SqlCommand(
+                @"Declare @encrytext varbinary(4000)=(SELECT  [KeyValue] FROM [SQLRAG].[dbo].[EncryptedKeys] WHERE  [KeyName]='AZURE_OPENAI_ENDPOINT')
+                    Declare @decrytext varchar(512)=DecryptByCert(Cert_ID('SqlRAGCertificate'),@encrytext,N'P@ssw0rd')
+                    select @decrytext ", conn);
+
+            using (SqlDataReader reader = cmd.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    return (string)reader[0];
+                }
+            }
+            return string.Empty;
+        }
+    }
+
+    private static string GetVersion()
+    {
+        System.Data.SqlClient.SqlConnection.ColumnEncryptionKeyCacheTtl = TimeSpan.Zero;
+        using (SqlConnection conn = new SqlConnection("context connection=true"))
+        {
+            conn.Open();
+            SqlCommand cmd = new SqlCommand(
+                @"Declare @encrytext varbinary(4000)=(SELECT  [KeyValue] FROM [SQLRAG].[dbo].[EncryptedKeys] WHERE  [KeyName]='OPENAI_API_VERSION')
+                    Declare @decrytext varchar(512)=DecryptByCert(Cert_ID('SqlRAGCertificate'),@encrytext,N'P@ssw0rd')
+                    select @decrytext ", conn);
+
             using (SqlDataReader reader = cmd.ExecuteReader())
             {
                 while (reader.Read())
@@ -44,21 +80,32 @@ public partial class OpenaiFunction
 
 
     [SqlFunction(DataAccess = DataAccessKind.Read)]
-    public static SqlArray GetEmbedding([SqlFacet(MaxSize = -1)] SqlString inputText)
+    public static SqlArray GetAzureEmbedding([SqlFacet(MaxSize = -1)] SqlString inputText,SqlString deploymentName)
     {
-       
+
         string apiKey = GetKey();
-        string apiUrl = "https://api.openai.com/v1/embeddings";
-        string requestBody = $"{{\"model\":\"text-embedding-ada-002\",\"input\": \"{inputText}\",\"encoding_format\":\"float\"}}";
+        string apiUrl = "";
+        string endpoint = GetEndpoint();
+        string apiVersion = GetVersion();
+        if (!deploymentName.IsNull)
+        {
+            apiUrl = string.Format("{0}/openai/deployments/{1}/embeddings?api-version={2}", endpoint, deploymentName.Value, apiVersion);
+        }
+        else
+        {
+            throw new ArgumentException();
+        }
+
+        string requestBody = $"{{\"input\": \"{inputText}\",\"encoding_format\":\"float\"}}";
         ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
         try
         {
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(apiUrl);
             request.Method = "POST";
-            request.Headers["Authorization"] = $"Bearer {apiKey}";
+            request.Headers["api-key"] = apiKey;
             request.Headers["Accept-Language"] = "zh-TW";
             request.ContentType = "application/json";
-            
+
 
             using (StreamWriter streamWriter = new StreamWriter(request.GetRequestStream()))
             {
@@ -70,7 +117,7 @@ public partial class OpenaiFunction
             using (StreamReader streamReader = new StreamReader(response.GetResponseStream()))
             {
                 result = streamReader.ReadToEnd();
-               
+
             }
             return new SqlArray(System.Array.ConvertAll(ParseEmbedding(result).Split(','), Double.Parse)); // 返回結果
         }
@@ -87,20 +134,31 @@ public partial class OpenaiFunction
 
     [return: SqlFacet(MaxSize = -1)]
     [SqlFunction(DataAccess = DataAccessKind.Read)]
-    public static SqlString ChatCompletion([SqlFacet(MaxSize = -1)] SqlString inputPrompt, [SqlFacet(MaxSize = -1)] SqlString systemProimpt = default(SqlString), SqlString model = default(SqlString))
+    public static SqlString AzureChatCompletion([SqlFacet(MaxSize = -1)] SqlString inputPrompt, [SqlFacet(MaxSize = -1)] SqlString systemProimpt = default(SqlString), SqlString deploymentName = default(SqlString))
     {
-       ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+        ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
         string apiKey = GetKey();
-        string apiUrl = "https://api.openai.com/v1/chat/completions";
-        string modelToUse = model.IsNull || String.IsNullOrWhiteSpace(model.Value) ? "gpt-3.5-turbo" : model.Value;
-        string requestBody1 = $@"{{""model"": ""{modelToUse}"", ""messages"": [{{""role"": ""system"", ""content"": ""{systemProimpt.ToString()}""}},{{""role"": ""user"", ""content"": ""{inputPrompt.ToString()}""}}]}}";
-        string requestBody = systemProimpt.IsNull || String.IsNullOrWhiteSpace(systemProimpt.Value) ? $@"{{""model"": ""{modelToUse}"", ""messages"": [{{""role"": ""user"", ""content"": ""{inputPrompt.ToString()}""}}]}}" : requestBody1;
+        string apiUrl = "";
+        string endpoint = GetEndpoint();
+        string apiVersion = GetVersion();
+        if (!deploymentName.IsNull)
+        {
+            apiUrl = string.Format("{0}/openai/deployments/{1}/chat/completions?api-version={2}", endpoint, deploymentName.Value, apiVersion);
+        }
+        else
+        {
+            throw new ArgumentException();
+        }
+
+        
+        string requestBody1 = $@"{{""messages"": [{{""role"": ""system"", ""content"": ""{systemProimpt.ToString()}""}},{{""role"": ""user"", ""content"": ""{inputPrompt.ToString()}""}}]}}";
+        string requestBody = systemProimpt.IsNull || String.IsNullOrWhiteSpace(systemProimpt.Value) ? $@"{{ ""messages"": [{{""role"": ""user"", ""content"": ""{inputPrompt.ToString()}""}}]}}" : requestBody1;
 
         try
         {
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(apiUrl);
             request.Method = "POST";
-            request.Headers["Authorization"] = $"Bearer {apiKey}";
+            request.Headers["api-key"] = apiKey;
             request.Headers["Accept-Language"] = "zh-TW";
             request.ContentType = "application/json";
 
@@ -113,6 +171,7 @@ public partial class OpenaiFunction
             using (StreamReader streamReader = new StreamReader(response.GetResponseStream()))
             {
                 string result = streamReader.ReadToEnd();
+                
                 return ParseChatting(result); // 返回結果
             }
         }
@@ -142,7 +201,7 @@ public partial class OpenaiFunction
     private const RegexOptions ExpressionOptions = RegexOptions.Singleline | RegexOptions.Multiline | RegexOptions.IgnoreCase;
     private static SqlString ParseChatting(string jsonResponse)
     {
-
+     
         Match match = Regex.Match(jsonResponse, "\"content\":\"(.*?)\"", ExpressionOptions);
         // 判斷是否匹配成功
         if (match.Success)
@@ -157,21 +216,6 @@ public partial class OpenaiFunction
         }
 
     }
-
-
-
-    [return: SqlFacet(MaxSize = -1)]
-    [SqlFunction(DataAccess = DataAccessKind.Read)]
-    public static SqlString Translate2zhtw([SqlFacet(MaxSize = -1)] SqlString inputPrompt, [SqlFacet(MaxSize = -1)] SqlString model = default(SqlString))
-    {
-        string _prompt = "#zh-TW 後續我將提供你一段文字內容，請直接翻譯為unicode文字內容，\"\"\"\n\r{0}\n\r\"\"\"\n\r請直接輸出無須說明";
-        string _system_prompt = "你是一個專業的中文翻譯官，你懂得如何使用恰如其分的修辭來翻譯在文本下的潛藏之意。";
-        var results = ChatCompletion(_prompt, _system_prompt, model.Value);
-        return new SqlString(results.Value);
-
-
-    }
-
 
 
 }

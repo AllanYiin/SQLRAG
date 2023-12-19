@@ -326,7 +326,7 @@ public struct SqlArray : INullable, IBinarySerialize
 
 
     [SqlMethod(IsDeterministic = true, IsPrecise = true)]
-    public static SqlArray Parse(SqlString s)
+    public static SqlArray Parse([SqlFacet(MaxSize = -1)] SqlString s)
     {
         if (s.IsNull)
             return Null;

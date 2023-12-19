@@ -28,9 +28,29 @@
 之後則需要透過顯式的聲明基於哪個憑證以及對應的密碼來進行解密:
 ```sql
 
-DecryptByCert(Cert_ID('SqlRAGCertificate'), EncryptByCert(Cert_ID('SqlRAGCertificate'), @cleartext) ,'P@ssw0rd')
+    DecryptByCert(Cert_ID('SqlRAGCertificate'), EncryptByCert(Cert_ID('SqlRAGCertificate'), @cleartext) ,'P@ssw0rd')
 
 ```
+
+如果你是Azure Openai Service用戶則需要將api key以及endpoint加密後存入
+```sql
+
+	use SQLRAG
+	Declare @cleartext varchar(512)='你的azure api key'
+	Declare @encrytext varbinary(4000)=EncryptByCert(Cert_ID('SqlRAGCertificate'), @cleartext) 
+
+	Declare @cleartext2 varchar(512)='你的azure api endpoint'
+	Declare @encrytext2 varbinary(4000)=EncryptByCert(Cert_ID('SqlRAGCertificate'), @cleartext2) 
+
+	INSERT INTO [SQLRAG].[dbo].[EncryptedKeys] 
+    	VALUES ( N'AZURE_OPENAI_KEY', N'用於調用Azure Openai Service 所用之API KEY',@encrytext );  
+	INSERT INTO [SQLRAG].[dbo].[EncryptedKeys] 
+    	VALUES ( N'AZURE_OPENAI_ENDPOINT', N'用於調用Azure Openai Service 所用之endpoint',@encrytext2 );  
+
+```
+
+
+
 3. 建置專案，發行至指定資料庫 (專案中的SQLRAG.publish.xml為發行設定檔範例，請改指向至你實際的資料庫)   
 4. assets中的QueryIntentCache_demo.sql (語意快取範例)以及ChatCompletion_demo.sql(ChatGPT回答範例)   
 

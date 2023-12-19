@@ -74,6 +74,7 @@
     <Compile Include="OpenaiFunction.cs" />
     <Compile Include="RagFunction.cs" />
     <Compile Include="SqlRagStoredProcedure.cs" />
+    <Compile Include="AzureOpenaiFunctions.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System.Net" />

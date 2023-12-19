@@ -7,6 +7,8 @@
 
 
 ## 安裝
+最小安裝要求:SQL Server 2022, Visual Studio 2022(需安裝SSDT)
+
 1. 首先要啟用SQL Server CLR:   
 ```sql
 	use SQLRAG
@@ -16,7 +18,12 @@
 	RECONFIGURE;  
 ```
 
-2. 如果要使用OpenaiFunction，之前的做法是在OpenaiFunction.cs中輸入你實際的OPENAI_API_KEY，這樣的做法是不能確保API KEY的安全的。在這一版中，我在SqlRAG資料庫中增加了dbo.EncryptedKeys資料表，其中KeyValue部分透過憑證加密。看起來複雜但我已經將自動調用的部分處理好，開發者只需要透過以下SQL 語法將API KEY加密後寫入資料表中即可。  
+2. 有以下幾種方式可以安裝:
+	- 使用release中提供的SQLRAG_CREATE.sql直接執行即可完成安裝(適合首次安裝者)
+	- 使用release中提供的dacpac檔，參考[網頁 (https://learn.microsoft.com/zh-tw/sql/relational-databases/data-tier-applications/upgrade-a-data-tier-application?view=sql-server-ver16)]內容安裝。
+	- 使用release中提供的原始碼，使用Visual Studio 2022開啟後修改各專案的資料庫連線後直接部署方案
+
+3. 如果要使用OpenaiFunction，之前的做法是在OpenaiFunction.cs中輸入你實際的OPENAI_API_KEY，這樣的做法是不能確保API KEY的安全的。在這一版中，我在SqlRAG資料庫中增加了dbo.EncryptedKeys資料表，其中KeyValue部分透過憑證加密。看起來複雜但我已經將自動調用的部分處理好，開發者只需要透過以下SQL 語法將API KEY加密後寫入資料表中即可。  
 ```sql
 	use SQLRAG
 	Declare @cleartext varchar(512)='sk-輸入你的OPENAI_API_KEYAPI KEY'
@@ -56,7 +63,6 @@
 
 
 
-3. 建置專案，發行至指定資料庫 (專案中的SQLRAG.publish.xml為發行設定檔範例，請改指向至你實際的資料庫)   
 4. assets中的QueryIntentCache_demo.sql (語意快取範例)以及ChatCompletion_demo.sql(ChatGPT回答範例)   
 
 ![ChatCompletion](assets/QueryCache.png)

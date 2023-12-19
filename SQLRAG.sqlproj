@@ -28,6 +28,7 @@
     <AssemblyOwner>dbo</AssemblyOwner>
     <PermissionSet>SAFE</PermissionSet>
     <AnsiWarnings>True</AnsiWarnings>
+    <DacVersion>0.1.0.0</DacVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <OutputPath>bin\Release\</OutputPath>
@@ -76,6 +77,7 @@
     <Compile Include="DistanceFunctions.cs" />
     <Compile Include="TextFunction.cs" />
     <Compile Include="SqlArray.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="SQLRAG.publish.xml" />

@@ -93,8 +93,9 @@ public partial class OpenaiFunction
         string apiKey = GetKey();
         string apiUrl = "https://api.openai.com/v1/chat/completions";
         string modelToUse = model.IsNull || String.IsNullOrWhiteSpace(model.Value) ? "gpt-3.5-turbo" : model.Value;
-        string requestBody1 = $@"{{""model"": ""{modelToUse}"", ""messages"": [{{""role"": ""system"", ""content"": ""{systemProimpt.ToString()}""}},{{""role"": ""user"", ""content"": ""{inputPrompt.ToString()}""}}]}}";
-        string requestBody = systemProimpt.IsNull || String.IsNullOrWhiteSpace(systemProimpt.Value) ? $@"{{""model"": ""{modelToUse}"", ""messages"": [{{""role"": ""user"", ""content"": ""{inputPrompt.ToString()}""}}]}}" : requestBody1;
+     
+        string requestBody1 =$"{{\"model\": \"{modelToUse}\", \"messages\": [{{\"role\": \"system\", \"content\": \"{systemProimpt.Value}\"}},{{\"role\": \"user\", \"content\": \"{inputPrompt.Value}\"}}]}}";
+        string requestBody = systemProimpt.IsNull || String.IsNullOrWhiteSpace(systemProimpt.Value) ? $"{{\"model\": \"{modelToUse}\", \"messages\": [{{\"role\": \"user\", \"content\": \"{inputPrompt.ToString()}\"}}]}}" : requestBody1;
 
         try
         {
@@ -143,7 +144,7 @@ public partial class OpenaiFunction
     private static SqlString ParseChatting(string jsonResponse)
     {
 
-        Match match = Regex.Match(jsonResponse, "\"content\":\"(.*?)\"", ExpressionOptions);
+        Match match = Regex.Match(jsonResponse, "\"content\": \"(.*?)\"", ExpressionOptions);
         // 判斷是否匹配成功
         if (match.Success)
         {
@@ -160,17 +161,46 @@ public partial class OpenaiFunction
 
 
 
-    [return: SqlFacet(MaxSize = -1)]
-    [SqlFunction(DataAccess = DataAccessKind.Read)]
-    public static SqlString Translate2zhtw([SqlFacet(MaxSize = -1)] SqlString inputPrompt, [SqlFacet(MaxSize = -1)] SqlString model = default(SqlString))
-    {
-        string _prompt = "#zh-TW 後續我將提供你一段文字內容，請直接翻譯為unicode文字內容，\"\"\"\n\r{0}\n\r\"\"\"\n\r請直接輸出無須說明";
-        string _system_prompt = "你是一個專業的中文翻譯官，你懂得如何使用恰如其分的修辭來翻譯在文本下的潛藏之意。";
-        var results = ChatCompletion(_prompt, _system_prompt, model.Value);
-        return new SqlString(results.Value);
+    //[return: SqlFacet(MaxSize = -1)]
+    //[SqlFunction(DataAccess = DataAccessKind.Read)]
+    //public static SqlString Translate2zhtw([SqlFacet(MaxSize = -1)] SqlString inputPrompt, SqlString model = default(SqlString))
+    //{
+
+    //    ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+    //    string apiKey = GetKey();
+    //    string apiUrl = "https://api.openai.com/v1/chat/completions";
+    //    string modelToUse = model.IsNull || String.IsNullOrWhiteSpace(model.Value) ? "gpt-3.5-turbo" : model.Value;
+
+    //    string requestBody = $"{{\"model\": \"{modelToUse}\", \"messages\": [{{\"role\": \"user\", \"content\": \"請直接將以下文字內容翻譯為繁體中文:\r\n{inputPrompt.Value}\"}}]}}";
+        
+    //    try
+    //    {
+    //        HttpWebRequest request = (HttpWebRequest)WebRequest.Create(apiUrl);
+    //        request.Method = "POST";
+    //        request.Headers["Authorization"] = $"Bearer {apiKey}";
+    //        request.Headers["Accept-Language"] = "zh-TW";
+    //        request.ContentType = "application/json";
+
+    //        using (StreamWriter streamWriter = new StreamWriter(request.GetRequestStream()))
+    //        {
+    //            streamWriter.Write(requestBody);
+    //        }
+
+    //        HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+    //        using (StreamReader streamReader = new StreamReader(response.GetResponseStream()))
+    //        {
+    //            string result = streamReader.ReadToEnd();
+    //            return ParseChatting(result); // 返回結果
+    //        }
+    //    }
+    //    catch (Exception ex)
+    //    {
+    //        // 錯誤處理
+    //        return new SqlString($"Error: {ex.Message}");
+    //    }
 
 
-    }
+    //}
 
 
 

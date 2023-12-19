@@ -23,7 +23,7 @@
 	Declare @encrytext varbinary(4000)=EncryptByCert(Cert_ID('SqlRAGCertificate'), @cleartext) 
 
 	INSERT INTO [SQLRAG].[dbo].[EncryptedKeys] 
-    	VALUES ( N'OPENAI_API_KEY', N'用於調用OPENAI所用之API KEY',@encrytext );  
+    	VALUES ( N'OPENAI_API_KEY', N'調用OPENAI所用之API KEY',@encrytext );  
 ```
 之後則需要透過顯式的聲明基於哪個憑證以及對應的密碼來進行解密:
 ```sql
@@ -36,16 +36,21 @@
 ```sql
 
 	use SQLRAG
-	Declare @cleartext varchar(512)='你的azure api key'
+	Declare @cleartext varchar(512)='***'
 	Declare @encrytext varbinary(4000)=EncryptByCert(Cert_ID('SqlRAGCertificate'), @cleartext) 
 
-	Declare @cleartext2 varchar(512)='你的azure api endpoint'
+	Declare @cleartext2 varchar(512)='https://***.openai.azure.com'
 	Declare @encrytext2 varbinary(4000)=EncryptByCert(Cert_ID('SqlRAGCertificate'), @cleartext2) 
 
+	Declare @cleartext3 varchar(512)='***'
+	Declare @encrytext3 varbinary(4000)=EncryptByCert(Cert_ID('SqlRAGCertificate'), @cleartext3) 
+
 	INSERT INTO [SQLRAG].[dbo].[EncryptedKeys] 
-    	VALUES ( N'AZURE_OPENAI_KEY', N'用於調用Azure Openai Service 所用之API KEY',@encrytext );  
+    	VALUES ( N'AZURE_OPENAI_API_KEY', N'調用Azure Openai Service 所用之API KEY',@encrytext );  
 	INSERT INTO [SQLRAG].[dbo].[EncryptedKeys] 
-    	VALUES ( N'AZURE_OPENAI_ENDPOINT', N'用於調用Azure Openai Service 所用之endpoint',@encrytext2 );  
+    	VALUES ( N'AZURE_OPENAI_ENDPOINT', N'調用Azure Openai Service 所用之endpoint',@encrytext2 );  
+	INSERT INTO [SQLRAG].[dbo].[EncryptedKeys] 
+    	VALUES ( N'OPENAI_API_VERSION', N'調用Azure Openai Service 所用之API Version',@encrytext3 );  
 
 ```
 

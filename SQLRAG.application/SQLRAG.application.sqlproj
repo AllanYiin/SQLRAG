@@ -27,6 +27,7 @@
     <Trustworthy>True</Trustworthy>
     <IncludeSchemaNameInFileName>True</IncludeSchemaNameInFileName>
     <GenerateCreateScript>False</GenerateCreateScript>
+    <DacVersion>0.1.0.0</DacVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <OutputPath>bin\Release\</OutputPath>
@@ -75,6 +76,7 @@
     <Compile Include="RagFunction.cs" />
     <Compile Include="SqlRagStoredProcedure.cs" />
     <Compile Include="AzureOpenaiFunctions.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System.Net" />

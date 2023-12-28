@@ -22,13 +22,13 @@ public partial class OpenaiFunction
 
     private static string GetKey()
     {
-        System.Data.SqlClient.SqlConnection.ColumnEncryptionKeyCacheTtl = TimeSpan.Zero;
+        //System.Data.SqlClient.SqlConnection.ColumnEncryptionKeyCacheTtl = TimeSpan.Zero;
         using (SqlConnection conn = new SqlConnection("context connection=true"))
         {
             conn.Open();
             SqlCommand cmd = new SqlCommand(
                 @"Declare @encrytext varbinary(4000)=(SELECT  [KeyValue] FROM [SQLRAG].[dbo].[EncryptedKeys] WHERE  [KeyName]='OPENAI_API_KEY')
-                    Declare @decrytext varchar(512)=DecryptByCert(Cert_ID('SqlRAGCertificate'),@encrytext,N'P@ssw0rd')
+                    Declare @decrytext varchar(512)=DecryptByCert(Cert_ID('SqlRAGCertificate'),@encrytext,N'SqlRAGP@ssw0rd')
                     select @decrytext ", conn);
         
             using (SqlDataReader reader = cmd.ExecuteReader())
@@ -51,33 +51,38 @@ public partial class OpenaiFunction
         string apiUrl = "https://api.openai.com/v1/embeddings";
         string requestBody = $"{{\"model\":\"text-embedding-ada-002\",\"input\": \"{inputText}\",\"encoding_format\":\"float\"}}";
         ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+      
         try
         {
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(apiUrl);
+            request.UserAgent = "Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.0; WOW64; " +
+                                "Trident/4.0; SLCC1; .NET CLR 2.0.50727; Media Center PC 5.0; " +
+                                ".NET CLR 3.5.21022; .NET CLR 3.5.30729; .NET CLR 3.0.30618; " +
+                                "InfoPath.2; OfficeLiveConnector.1.3; OfficeLivePatch.0.0)";
             request.Method = "POST";
             request.Headers["Authorization"] = $"Bearer {apiKey}";
             request.Headers["Accept-Language"] = "zh-TW";
             request.ContentType = "application/json";
-            
 
             using (StreamWriter streamWriter = new StreamWriter(request.GetRequestStream()))
             {
                 streamWriter.Write(requestBody);
             }
 
-            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-            string result;
-            using (StreamReader streamReader = new StreamReader(response.GetResponseStream()))
+            using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
             {
-                result = streamReader.ReadToEnd();
-               
+                string result;
+                using (StreamReader streamReader = new StreamReader(response.GetResponseStream()))
+                {
+                    result = streamReader.ReadToEnd();
+                }
+
+                return new SqlArray(System.Array.ConvertAll(ParseEmbedding(result).Split(','), Double.Parse)); // 返回結果
             }
-            return new SqlArray(System.Array.ConvertAll(ParseEmbedding(result).Split(','), Double.Parse)); // 返回結果
         }
-        catch (Exception ex)
+        catch (Exception)
         {
-            // 錯誤處理
-            throw ex;
+            return null;
         }
     }
 
@@ -100,6 +105,11 @@ public partial class OpenaiFunction
         try
         {
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(apiUrl);
+            request.UserAgent =
+               "Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.0; WOW64; " +
+               "Trident/4.0; SLCC1; .NET CLR 2.0.50727; Media Center PC 5.0; " +
+               ".NET CLR 3.5.21022; .NET CLR 3.5.30729; .NET CLR 3.0.30618; " +
+               "InfoPath.2; OfficeLiveConnector.1.3; OfficeLivePatch.0.0)";
             request.Method = "POST";
             request.Headers["Authorization"] = $"Bearer {apiKey}";
             request.Headers["Accept-Language"] = "zh-TW";

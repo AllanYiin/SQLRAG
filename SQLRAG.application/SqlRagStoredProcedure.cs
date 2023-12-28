@@ -1,4 +1,5 @@
 ﻿using System;
+using System.CodeDom;
 using System.Data;
 using System.Data.SqlClient;
 using System.Data.SqlTypes;
@@ -48,4 +49,63 @@ public partial class StoredProcedures
 
         }
     }
+
+    [Microsoft.SqlServer.Server.SqlProcedure]
+    public static void InsertKnowledgeBase(SqlGuid id, SqlGuid parent_id, SqlInt32 ordinal, SqlBoolean is_rewrite, SqlInt16 source_type, SqlString url, [SqlFacet(MaxSize = -1)] SqlString text_content, [SqlFacet(MaxSize = -1)] SqlString raw)
+    {
+       
+        using (SqlConnection connection = new SqlConnection("context connection=true"))
+        {
+            try
+            {
+                SqlArray embedded=SqlArray.Null;
+                try
+                {
+                    embedded = OpenaiFunction.GetEmbedding(text_content);
+                }
+                catch 
+                {
+
+                }
+                connection.Open();
+                SqlCommand command = new SqlCommand("INSERT INTO SQLRAG.[dbo].[KnowledgeBase]\r\n           ([PartId]\r\n           ,[ParentId]\r\n    ,[Ordinal]\r\n    ,[IsRewrite]\r\n         ,[SourceType]\r\n           ,[Url]\r\n           ,[TextContent]\r\n   ,[Embeddings]\r\n             ,[Raw])\r\n     VALUES\r\n           (@id ,@parent_id, @ordinal , @is_rewrite, @source_type,@url, @text_content,@embedded,  @raw)", connection);
+                SqlParameter para_id = new SqlParameter("id", id);
+                SqlParameter para_parentid = new SqlParameter("parent_id", parent_id);
+                SqlParameter para_ordinal = new SqlParameter("ordinal", ordinal);
+                SqlParameter para_isrewrite = new SqlParameter("is_rewrite", is_rewrite);
+                SqlParameter para_source_type = new SqlParameter("source_type", source_type);
+                SqlParameter para_url = new SqlParameter("url", url);
+                SqlParameter para_text_content = new SqlParameter("text_content", text_content);
+                SqlParameter paraEmbedded = new SqlParameter("embedded", embedded);
+                SqlParameter para_raw = new SqlParameter("raw", raw);
+
+                para_url.SqlDbType = SqlDbType.NVarChar;
+                para_text_content.SqlDbType = SqlDbType.NVarChar;
+                para_raw.SqlDbType = SqlDbType.NVarChar;
+                paraEmbedded.SqlDbType = SqlDbType.Udt;
+                paraEmbedded.UdtTypeName = "SqlArray";
+
+                command.Parameters.Add(para_id);
+                command.Parameters.Add(para_parentid);
+                command.Parameters.Add(para_ordinal);
+                command.Parameters.Add(para_isrewrite);
+                command.Parameters.Add(para_source_type);
+                command.Parameters.Add(para_url);
+                command.Parameters.Add(para_text_content);
+                command.Parameters.Add(paraEmbedded);
+                command.Parameters.Add(para_raw);
+                command.ExecuteNonQuery();
+
+            }
+            catch (System.Net.WebException we)
+            {
+                throw new Exception(we.Message + "\r\n" + we.InnerException.Message + "\r\n" + we.Response + "\r\n" + we.StackTrace);
+            }
+
+
+        }
+    }
+
+
+
 }

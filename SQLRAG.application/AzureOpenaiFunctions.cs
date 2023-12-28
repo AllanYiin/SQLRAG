@@ -20,7 +20,7 @@ public partial class AzureOpenaiFunction
             conn.Open();
             SqlCommand cmd = new SqlCommand(
                 @"Declare @encrytext varbinary(4000)=(SELECT  [KeyValue] FROM [SQLRAG].[dbo].[EncryptedKeys] WHERE  [KeyName]='AZURE_OPENAI_API_KEY')
-                    Declare @decrytext varchar(512)=DecryptByCert(Cert_ID('SqlRAGCertificate'),@encrytext,N'P@ssw0rd')
+                    Declare @decrytext varchar(512)=DecryptByCert(Cert_ID('SqlRAGCertificate'),@encrytext,N'SqlRAGP@ssw0rd')
                     select @decrytext ", conn);
 
             using (SqlDataReader reader = cmd.ExecuteReader())
@@ -42,7 +42,7 @@ public partial class AzureOpenaiFunction
             conn.Open();
             SqlCommand cmd = new SqlCommand(
                 @"Declare @encrytext varbinary(4000)=(SELECT  [KeyValue] FROM [SQLRAG].[dbo].[EncryptedKeys] WHERE  [KeyName]='AZURE_OPENAI_ENDPOINT')
-                    Declare @decrytext varchar(512)=DecryptByCert(Cert_ID('SqlRAGCertificate'),@encrytext,N'P@ssw0rd')
+                    Declare @decrytext varchar(512)=DecryptByCert(Cert_ID('SqlRAGCertificate'),@encrytext,N'SqlRAGP@ssw0rd')
                     select @decrytext ", conn);
 
             using (SqlDataReader reader = cmd.ExecuteReader())
@@ -64,7 +64,7 @@ public partial class AzureOpenaiFunction
             conn.Open();
             SqlCommand cmd = new SqlCommand(
                 @"Declare @encrytext varbinary(4000)=(SELECT  [KeyValue] FROM [SQLRAG].[dbo].[EncryptedKeys] WHERE  [KeyName]='OPENAI_API_VERSION')
-                    Declare @decrytext varchar(512)=DecryptByCert(Cert_ID('SqlRAGCertificate'),@encrytext,N'P@ssw0rd')
+                    Declare @decrytext varchar(512)=DecryptByCert(Cert_ID('SqlRAGCertificate'),@encrytext,N'SqlRAGP@ssw0rd')
                     select @decrytext ", conn);
 
             using (SqlDataReader reader = cmd.ExecuteReader())
@@ -101,6 +101,11 @@ public partial class AzureOpenaiFunction
         try
         {
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(apiUrl);
+            request.UserAgent =
+               "Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.0; WOW64; " +
+               "Trident/4.0; SLCC1; .NET CLR 2.0.50727; Media Center PC 5.0; " +
+               ".NET CLR 3.5.21022; .NET CLR 3.5.30729; .NET CLR 3.0.30618; " +
+               "InfoPath.2; OfficeLiveConnector.1.3; OfficeLivePatch.0.0)";
             request.Method = "POST";
             request.Headers["api-key"] = apiKey;
             request.Headers["Accept-Language"] = "zh-TW";
@@ -157,6 +162,11 @@ public partial class AzureOpenaiFunction
         try
         {
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(apiUrl);
+            request.UserAgent =
+               "Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.0; WOW64; " +
+               "Trident/4.0; SLCC1; .NET CLR 2.0.50727; Media Center PC 5.0; " +
+               ".NET CLR 3.5.21022; .NET CLR 3.5.30729; .NET CLR 3.0.30618; " +
+               "InfoPath.2; OfficeLiveConnector.1.3; OfficeLivePatch.0.0)";
             request.Method = "POST";
             request.Headers["api-key"] = apiKey;
             request.Headers["Accept-Language"] = "zh-TW";

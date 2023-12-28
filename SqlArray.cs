@@ -133,14 +133,14 @@ public struct SqlArray : INullable, IBinarySerialize
     public override bool Equals(object other)
         => other is SqlArray otherArray && _data == otherArray._data;
 
-    public bool Equals(SqlArray other)
-       => _data == other._data;
+    //public bool Equals(SqlArray other)
+    //   => _data == other._data;
 
 
-    [SqlMethod(IsDeterministic = true, IsPrecise = true)]
+    [SqlMethod(IsDeterministic = true, IsPrecise = true,Name ="Add")]
     public static SqlArray Add(SqlArray a, SqlArray b)
     {
-        // 檢查維度是否匹配，實際實現中應該添加更多錯誤處理
+ 
         var result = new double[a._data.Length];
         for (int i = 0; i < a._data.Length; i++)
         {
@@ -148,6 +148,7 @@ public struct SqlArray : INullable, IBinarySerialize
         }
         return new SqlArray(result);
     }
+
     public static SqlArray operator +(SqlArray a, SqlArray b)
     {
         // 檢查維度是否匹配，實際實現中應該添加更多錯誤處理
@@ -162,7 +163,6 @@ public struct SqlArray : INullable, IBinarySerialize
     [SqlMethod(IsDeterministic = true, IsPrecise = true)]
     public static SqlArray Subtract(SqlArray a, SqlArray b)
     {
-        // 檢查維度是否匹配，實際實現中應該添加更多錯誤處理
         var result = new double[a._data.Length];
         for (int i = 0; i < a._data.Length; i++)
         {

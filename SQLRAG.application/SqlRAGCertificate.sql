@@ -1,3 +1,3 @@
 ﻿CREATE CERTIFICATE [SqlRAGCertificate]
-	ENCRYPTION BY PASSWORD = 'P@ssw0rd'
+	ENCRYPTION BY PASSWORD = 'SqlRAGP@ssw0rd'
 	WITH SUBJECT = 'certificate_subject'

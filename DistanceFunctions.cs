@@ -9,9 +9,19 @@ public partial class DistanceFunctions
 
 
 
+    /// <summary>
+    /// Calculates the cosine similarity between two vectors.
+    /// </summary>
+    /// <param name="vector1">The first vector.</param>
+    /// <param name="vector2">The second vector.</param>
+    /// <returns>The cosine similarity between the two vectors.</returns>
     [SqlFunction]
     public static SqlDouble CosineSimilarity(SqlArray vector1, SqlArray vector2)
     {
+        if (vector1.IsNull || vector2.IsNull)
+        {
+            return SqlDouble.Null;
+        }
 
         double[] vec1 = vector1.Data;
         double[] vec2 = vector2.Data;
@@ -40,6 +50,11 @@ public partial class DistanceFunctions
     [SqlFunction]
     public static SqlDouble EuclideanDistance(SqlArray vector1, SqlArray vector2)
     {
+        if (vector1.IsNull || vector2.IsNull)
+        {
+            return SqlDouble.Null;
+        }
+
         double[] vec1 = vector1.Data;
         double[] vec2 = vector2.Data;
 
@@ -59,6 +74,11 @@ public partial class DistanceFunctions
     [SqlFunction]
     public static SqlDouble ManhattanDistance(SqlArray vector1, SqlArray vector2)
     {
+        if (vector1.IsNull || vector2.IsNull)
+        {
+            return SqlDouble.Null;
+        }
+
         double[] vec1 = vector1.Data;
         double[] vec2 = vector2.Data;
 
@@ -77,10 +97,15 @@ public partial class DistanceFunctions
 
 
     [SqlFunction]
-    public static SqlDouble HammingDistance(SqlString vector1, SqlString vector2)
+    public static SqlDouble HammingDistance(SqlString InputString1, SqlString InputString2)
     {
-        char[] vec1 = vector1.Value.ToCharArray();
-        char[] vec2 = vector2.Value.ToCharArray();
+        if (InputString1.IsNull || InputString2.IsNull)
+        {
+            return SqlDouble.Null;
+        }
+
+        char[] vec1 = InputString1.Value.ToCharArray();
+        char[] vec2 = InputString2.Value.ToCharArray();
 
         if (vec1.Length != vec2.Length)
             return SqlDouble.Null;
@@ -98,6 +123,11 @@ public partial class DistanceFunctions
     [SqlFunction]
     public static SqlDouble ChebyshevDistance(SqlArray vector1, SqlArray vector2)
     {
+        if (vector1.IsNull || vector2.IsNull)
+        {
+            return SqlDouble.Null;
+        }
+
         double[] vec1 = vector1.Data;
         double[] vec2 = vector2.Data;
 
@@ -121,6 +151,11 @@ public partial class DistanceFunctions
     [SqlFunction]
     public static SqlDouble MinkowskiDistance(SqlArray vector1, SqlArray vector2, SqlDouble p)
     {
+        if (vector1.IsNull || vector2.IsNull)
+        {
+            return SqlDouble.Null;
+        }
+
         if (p.Value < 1)
             return SqlDouble.Null; // p 必須大於等於1
 
@@ -144,6 +179,11 @@ public partial class DistanceFunctions
     [SqlFunction]
     public static SqlInt32 LevenshteinDistance([SqlFacet(MaxSize = -1)] SqlString InputString1, [SqlFacet(MaxSize = -1)] SqlString InputString2)
     {
+        if (InputString1.IsNull || InputString2.IsNull)
+        {
+            return SqlInt32.Null;
+        }
+
         int n = InputString1.Value.Length;
         int m = InputString2.Value.Length;
         int[,] d = new int[n + 1, m + 1];

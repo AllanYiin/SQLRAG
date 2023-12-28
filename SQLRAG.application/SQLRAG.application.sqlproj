@@ -21,7 +21,7 @@
     <SqlServerVerification>False</SqlServerVerification>
     <IncludeCompositeObjects>True</IncludeCompositeObjects>
     <TargetDatabaseSet>True</TargetDatabaseSet>
-    <PermissionSet>EXTERNAL_ACCESS</PermissionSet>
+    <PermissionSet>UNSAFE</PermissionSet>
     <AssemblyOwner>dbo</AssemblyOwner>
     <DefaultCollation>Chinese_Taiwan_Stroke_CI_AS</DefaultCollation>
     <Trustworthy>True</Trustworthy>
@@ -70,6 +70,7 @@
     </Build>
     <Build Include="dbo.WebPilotLogs.sql" />
     <Build Include="SqlRAGCertificate.sql" />
+    <Build Include="dbo.KnowledgeBase.sql" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="OpenaiFunction.cs" />
